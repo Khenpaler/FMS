@@ -9,35 +9,35 @@ Route::get('/', function () {
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', function () {
-        return Inertia::render('Dashboard');
+        return Inertia::render('dashboard/index');
     })->name('dashboard');
 
     Route::get('personnel', function () {
-        return Inertia::render('Personnels');
+        return Inertia::render('personnels/index');
     })->name('personnel');
 
     Route::get('bus-profile', function () {
-        return Inertia::render('BusProfiles');
+        return Inertia::render('bus-profiles/index');
     })->name('bus-profile');
 
     Route::get('devices', function () {
-        return Inertia::render('Devices');
+        return Inertia::render('devices/index');
     })->name('devices');
 
     Route::get('maintenance', function () {
-        return Inertia::render('Maintenance');
+        return Inertia::render('maintenance/index');
     })->name('maintenance');
 
     Route::get('dispatch-monitoring', function () {
-        return Inertia::render('DispatchMonitoring');
+        return Inertia::render('dispatch-monitoring/index');
     })->name('dispatch-monitoring');
 
     Route::get('fuel-monitoring', function () {
-        return Inertia::render('FuelMonitoring');
+        return Inertia::render('fuel-monitoring/index');
     })->name('fuel-monitoring');
 
     Route::get('feedbacks', function () {
-        return Inertia::render('Feedbacks');
+        return Inertia::render('feedbacks/index');
     })->name('feedbacks');
 });
 
