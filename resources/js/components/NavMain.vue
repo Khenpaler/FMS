@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { ref } from 'vue';
-import { Link } from '@inertiajs/vue3';
+import { ref, computed } from 'vue';
+import { Link, usePage } from '@inertiajs/vue3';
 import { SidebarMenu, SidebarMenuItem, SidebarMenuButton } from '@/components/ui/sidebar';
 import type { NavItem } from '@/types';
 import { ChevronDown } from 'lucide-vue-next';
@@ -8,6 +8,18 @@ import { ChevronDown } from 'lucide-vue-next';
 defineProps<{
     items: NavItem[];
 }>();
+
+const page = usePage();
+
+const isActive = (item: NavItem) => {
+    if (item.href) {
+        return page.url.startsWith(item.href);
+    }
+    if (item.children) {
+        return item.children.some(child => child.href && page.url.startsWith(child.href));
+    }
+    return false;
+};
 
 const expandedItems = ref<Set<string>>(new Set());
 
@@ -29,7 +41,7 @@ const isExpanded = (itemTitle: string) => {
         <SidebarMenuItem v-for="item in items" :key="item.title">
             <!-- Regular menu item -->
             <template v-if="!item.children">
-                <SidebarMenuButton :as-child="true">
+                <SidebarMenuButton :as-child="true" :is-active="isActive(item)">
                     <Link v-if="item.href" :href="item.href" class="w-full">
                         <component :is="item.icon" class="h-4 w-4" />
                         {{ item.title }}
@@ -41,6 +53,7 @@ const isExpanded = (itemTitle: string) => {
             <template v-else>
                 <SidebarMenuButton 
                     :as-child="true"
+                    :is-active="isActive(item)"
                     @click="toggleCollapse(item.title)"
                 >
                     <div class="w-full flex items-center justify-between">
@@ -61,6 +74,7 @@ const isExpanded = (itemTitle: string) => {
                         v-for="child in item.children" 
                         :key="child.title"
                         :as-child="true"
+                        :is-active="isActive(child)"
                     >
                         <Link v-if="child.href" :href="child.href" class="w-full">
                             <component :is="child.icon" class="h-4 w-4" />
