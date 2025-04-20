@@ -76,8 +76,12 @@ const props = defineProps<Props>();
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
-        title: 'Personnels',
-        href: '/personnel',
+        title: 'Personnel Management',
+        href: '/personnel-management',
+    },
+    {
+        title: 'Personnel',
+        href: '/personnel-management/personnels',
     },
 ];
 

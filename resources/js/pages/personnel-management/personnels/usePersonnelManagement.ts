@@ -46,14 +46,14 @@ export function usePersonnelManagement(initialData: {
             type: type.value
         };
         
-        router.post(route('personnel.store'), formData, {
+        router.post(route('personnel-management.personnels.store'), formData, {
             onSuccess: () => {
                 toast.success('Personnel created successfully');
                 submittedForm.reset();
                 submittedForm.clearErrors();
                 modalsManager.value?.closeModal('create');
                 // Refresh the page to show new data
-                router.visit(route('personnel.index', { type: type.value }));
+                router.visit(route('personnel-management.personnels.index', { type: type.value }));
             },
             onError: (errors: Record<string, string>) => {
                 toast.error('Failed to create personnel');
@@ -73,13 +73,13 @@ export function usePersonnelManagement(initialData: {
             type: type.value
         };
 
-        router.put(route('personnel.update', id), formData, {
+        router.put(route('personnel-management.personnels.update', id), formData, {
             onSuccess: () => {
                 toast.success('Personnel updated successfully');
                 submittedForm.reset();
                 submittedForm.clearErrors();
                 modalsManager.value?.closeModal('edit');
-                router.visit(route('personnel.index', { type: type.value }));
+                router.visit(route('personnel-management.personnels.index', { type: type.value }));
             },
             onError: (errors: Record<string, string>) => {
                 toast.error('Failed to update personnel');
@@ -94,7 +94,7 @@ export function usePersonnelManagement(initialData: {
     // Delete
     const handleDelete = (personnel: Personnel) => {
         if (confirm('Are you sure you want to delete this personnel?')) {
-            router.delete(route('personnel.destroy', personnel.id), {
+            router.delete(route('personnel-management.personnels.destroy', personnel.id), {
                 onSuccess: () => {
                     toast.success('Personnel deleted successfully');
                 },
@@ -107,7 +107,7 @@ export function usePersonnelManagement(initialData: {
 
     // Restore
     const handleRestore = (personnel: Personnel) => {
-        router.post(route('personnel.restore', personnel.id), {
+        router.post(route('personnel-management.personnels.restore', personnel.id), {
             onSuccess: () => {
                 toast.success('Personnel restored successfully');
             },
@@ -119,7 +119,7 @@ export function usePersonnelManagement(initialData: {
 
     // Toggle Active Status
     const handleToggleActive = (personnel: Personnel) => {
-        router.post(route('personnel.toggle-active', personnel.id));
+        router.post(route('personnel-management.personnels.toggle-active', personnel.id));
     };
 
     // Navigation
@@ -130,7 +130,7 @@ export function usePersonnelManagement(initialData: {
     };
 
     const handleView = (personnel: Personnel) => {
-        router.get(route('personnel.show', personnel.id));
+        router.get(route('personnel-management.personnels.show', personnel.id));
     };
 
     // UI Controls
@@ -151,7 +151,7 @@ export function usePersonnelManagement(initialData: {
 
     const handleFiltersChange = (newSearch: string, newType: PersonnelType, newPage: number, newPerPage: number) => {
         router.get(
-            route('personnel.index'),
+            route('personnel-management.personnels.index'),
             {
                 type: newType,
                 search: newSearch,

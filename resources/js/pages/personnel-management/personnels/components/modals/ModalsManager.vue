@@ -70,7 +70,7 @@ const LoadingState = defineComponent({
 
 // Lazy load components
 const PersonnelForm = defineAsyncComponent(() => 
-    import('./../forms/PersonnelForm.vue')
+    import('../forms/PersonnelForm.vue')
         .catch(error => {
             console.error('Error loading PersonnelForm:', error);
             throw error;

@@ -13,10 +13,18 @@ Route::middleware(['auth', 'verified'])->group(function () {
         return Inertia::render('dashboard/index');
     })->name('dashboard');
 
-    // Personnel Routes
-    Route::resource('personnel', PersonnelController::class)->except(['create', 'edit']);
-    Route::put('personnel/{personnel}/restore', [PersonnelController::class, 'restore'])->name('personnel.restore');
-    Route::put('personnel/{personnel}/toggle-active', [PersonnelController::class, 'toggleActive'])->name('personnel.toggle-active');
+    // Personnel Management Routes
+    Route::prefix('personnel-management')->name('personnel-management.')->group(function () {
+        // Personnel Routes
+        Route::resource('personnels', PersonnelController::class)->except(['create', 'edit']);
+        Route::put('personnels/{personnel}/restore', [PersonnelController::class, 'restore'])->name('personnels.restore');
+        Route::put('personnels/{personnel}/toggle-active', [PersonnelController::class, 'toggleActive'])->name('personnels.toggle-active');
+
+        // Accounts Routes (placeholder)
+        Route::get('accounts', function () {
+            return Inertia::render('personnel-management/accounts/index');
+        })->name('accounts.index');
+    });
 
     Route::get('bus-profile', function () {
         return Inertia::render('bus-profiles/index');

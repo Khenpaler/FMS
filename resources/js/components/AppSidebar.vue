@@ -5,7 +5,7 @@ import NavUser from '@/components/NavUser.vue';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/vue3';
-import { BookOpen, Bus, Folder, LayoutGrid, MessageCircle, Monitor, Users, Wrench, Fuel, Locate } from 'lucide-vue-next';
+import { Bus, LayoutGrid, MessageCircle, Monitor, Users, Wrench, Fuel, Locate, UserCircle } from 'lucide-vue-next';
 import AppLogo from './AppLogo.vue';
 
 const mainNavItems: NavItem[] = [
@@ -15,9 +15,20 @@ const mainNavItems: NavItem[] = [
         icon: LayoutGrid,
     },
     {
-        title: 'Personnels',
-        href: '/personnel',
+        title: 'Personnel Management',
         icon: Users,
+        children: [
+            {
+                title: 'Personnel',
+                href: '/personnel-management/personnels',
+                icon: Users,
+            },
+            {
+                title: 'Accounts',
+                href: '/personnel-management/accounts',
+                icon: UserCircle,
+            },
+        ],
     },
     {
         title: 'Bus Profiles',

@@ -13,9 +13,9 @@ export interface BreadcrumbItem {
 
 export interface NavItem {
     title: string;
-    href: string;
-    icon?: LucideIcon;
-    isActive?: boolean;
+    href?: string;
+    icon?: any;
+    children?: NavItem[];
 }
 
 export interface SharedData extends PageProps {

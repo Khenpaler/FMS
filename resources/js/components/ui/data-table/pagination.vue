@@ -8,7 +8,7 @@
                 @update:modelValue="$emit('update:itemsPerPage', selectedPageSize)"
             >
                 <SelectTrigger>
-                    <SelectValue :placeholder="itemsPerPage" />
+                    <SelectValue :placeholder="String(itemsPerPage)" />
                 </SelectTrigger>
                 <SelectContent>
                     <SelectItem 
@@ -28,7 +28,7 @@
                 Showing {{ currentItems }} of {{ totalItems }} entries
             </p>
             
-            <Pagination v-if="totalPages > 0">
+            <Pagination v-if="totalPages > 0" :items-per-page="itemsPerPage" :total="totalItems">
                 <PaginationContent>
                     <PaginationFirst @click="$emit('update:page', 1)" :disabled="page === 1" />
                     <PaginationPrevious 

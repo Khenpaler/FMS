@@ -24,7 +24,7 @@ class PersonnelController extends Controller
             perPage: $request->integer('per_page', 10)
         );
 
-        return Inertia::render('personnels/index', [
+        return Inertia::render('personnel-management/personnels/index', [
             'personnel' => $personnel->items(),
             'type' => $request->get('type', 'drivers'),
             'search' => $request->get('search'),
@@ -52,13 +52,13 @@ class PersonnelController extends Controller
         $personnel = $this->personnelService->create($request->validated());
         
         return redirect()
-            ->route('personnel.index', ['type' => $personnel->type])
+            ->route('personnel-management.personnels.index', ['type' => $personnel->type])
             ->with('success', 'Personnel created successfully.');
     }
 
     public function show(Personnel $personnel): Response
     {
-        return Inertia::render('personnels/show', [
+        return Inertia::render('personnel-management/personnels/show', [
             'personnel' => $personnel
         ]);
     }
@@ -75,7 +75,7 @@ class PersonnelController extends Controller
         $this->personnelService->update($personnel, $request->validated());
         
         return redirect()
-            ->route('personnel.index', ['type' => $personnel->type])
+            ->route('personnel-management.personnels.index', ['type' => $personnel->type])
             ->with('success', 'Personnel updated successfully.');
     }
 
@@ -84,7 +84,7 @@ class PersonnelController extends Controller
         $this->personnelService->delete($personnel);
         
         return redirect()
-            ->route('personnel.index', ['type' => $personnel->type])
+            ->route('personnel-management.personnels.index', ['type' => $personnel->type])
             ->with('success', 'Personnel deleted successfully.');
     }
 
@@ -93,7 +93,7 @@ class PersonnelController extends Controller
         $this->personnelService->restore($personnel);
         
         return redirect()
-            ->route('personnel.index', ['type' => $personnel->type])
+            ->route('personnel-management.personnels.index', ['type' => $personnel->type])
             ->with('success', 'Personnel restored successfully.');
     }
 
@@ -102,7 +102,7 @@ class PersonnelController extends Controller
         $this->personnelService->toggleActive($personnel);
         
         return redirect()
-            ->route('personnel.index', ['type' => $personnel->type])
+            ->route('personnel-management.personnels.index', ['type' => $personnel->type])
             ->with('success', 'Personnel status updated successfully.');
     }
 } 
