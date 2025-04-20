@@ -93,6 +93,8 @@
 </template>
 
 <script setup lang="ts">
+import { useForm } from '@inertiajs/vue3';
+
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { 
@@ -104,20 +106,26 @@ import {
 } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import InputError from '@/components/ui/input-error.vue';
-import type { PersonnelFormData } from '../../types';
-import { useForm } from '@inertiajs/vue3';
 
-defineEmits<{
+import type { PersonnelFormData } from '../../types';
+
+const emit = defineEmits<{
     (e: 'submit', form: ReturnType<typeof useForm<PersonnelFormData>>): void;
 }>();
 
 const form = useForm<PersonnelFormData>({
     name: '',
-    type: '',
+    type: 'drivers' as const,
     birthday: '',
     license_number: '',
     address: '',
     phone_number: '',
     contact_person: '',
 });
+
+const submit = () => {
+    emit('submit', form);
+};
+
+defineExpose({ submit });
 </script> 

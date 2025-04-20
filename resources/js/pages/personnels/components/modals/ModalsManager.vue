@@ -6,11 +6,11 @@
                 v-model:is-open="modals.create"
                 title="Add New Personnel"
                 description="Fill in the details to add a new personnel."
-                @save="() => {}"
+                @save="() => formRef?.submit()"
                 save-text="Save Personnel"
                 width="w-[95vw] sm:w-[500px] lg:w-[600px]"
             >
-                <PersonnelForm @submit="handleCreateSubmit" />
+                <PersonnelForm ref="formRef" @submit="handleCreateSubmit" />
             </Modals>
         </template>
 
@@ -23,8 +23,10 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, defineAsyncComponent, defineComponent } from 'vue';
+import { reactive, defineAsyncComponent, defineComponent, ref } from 'vue';
 import Modals from '@/components/reusables/Modals.vue';
+import type { PersonnelFormData } from '../../types';
+import type { InertiaForm } from '@inertiajs/vue3';
 
 // Internal Loading Component
 const LoadingState = defineComponent({
@@ -57,6 +59,8 @@ const modals = reactive<ModalState>({
     create: false
 });
 
+const formRef = ref<{ submit: () => void } | null>(null);
+
 // Expose methods to control modals
 const openModal = (modalName: keyof ModalState) => {
     modals[modalName] = true;
@@ -66,12 +70,11 @@ const closeModal = (modalName: keyof ModalState) => {
     modals[modalName] = false;
 };
 
-const handleCreateSubmit = (form: any) => {
+const handleCreateSubmit = (form: InertiaForm<PersonnelFormData>) => {
     form.post(route('personnel.store'), {
         onSuccess: () => {
             form.reset();
             form.clearErrors();
-            form.isDirty = false;
             closeModal('create');
         },
     });

@@ -13,7 +13,7 @@
                 :personnel="personnel"
                 v-model="search"
                 @edit="handleEdit"
-                @remove="handleRemove"
+                @remove="handleDelete"
                 @view="handleView"
                 @add-new="handleAddNew"
             />
@@ -43,17 +43,17 @@ import Tabs from './components/Tabs.vue';
 import ModalsManager from './components/modals/ModalsManager.vue';
 
 import type { BreadcrumbItem } from '@/types';
-import type { Personnel } from './types';
+import type { Personnel, PersonnelType } from './types';
 
 import { usePersonnelManagement } from './usePersonnelManagement';
 
 interface Props {
     personnel: Personnel[];
-    type: string;
+    type: PersonnelType;
     search?: string;
     filters: {
         search?: string;
-        type: string;
+        type: PersonnelType;
         only_active: boolean;
     };
     pagination: {
@@ -81,7 +81,7 @@ const {
     modalsManager,
     handleTabChange,
     handleEdit,
-    handleRemove,
+    handleDelete,
     handleView,
     handleAddNew,
     handleViewHistory,

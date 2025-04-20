@@ -5,7 +5,7 @@
                 <button
                     v-for="tab in tabs"
                     :key="tab.id"
-                    @click="$emit('update:modelValue', tab.id)"
+                    @click="$emit('update:model-value', tab.id)"
                     :class="[
                         'px-3 py-2 text-sm font-medium transition-colors',
                         modelValue === tab.id
@@ -31,9 +31,10 @@
 <script setup lang="ts">
 import { Button } from '@/components/ui/button';
 import { ClockIcon } from 'lucide-vue-next';
+import type { PersonnelType } from '../types';
 
 interface Tab {
-    id: string;
+    id: PersonnelType;
     name: string;
 }
 
@@ -41,14 +42,14 @@ const tabs: Tab[] = [
     { id: 'drivers', name: 'Drivers' },
     { id: 'pao', name: 'Passenger Assistant Officer' },
     { id: 'dispatchers', name: 'Dispatchers' }
-];
+] as const;
 
 defineProps<{
-    modelValue: string;
+    modelValue: PersonnelType;
 }>();
 
 defineEmits<{
-    (e: 'update:modelValue', value: string): void;
+    (e: 'update:model-value', value: PersonnelType): void;
     (e: 'view-history'): void;
 }>();
 </script>

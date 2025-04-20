@@ -1,9 +1,9 @@
 import { ref } from 'vue';
 import { useForm, router } from '@inertiajs/vue3';
-import type { PersonnelFormData, Personnel } from './types';
+import type { PersonnelFormData, Personnel, PersonnelType } from './types';
 
 export function usePersonnelManagement(initialData: {
-    type: string;
+    type: PersonnelType;
     search?: string;
     pagination: {
         current_page: number;
@@ -12,12 +12,13 @@ export function usePersonnelManagement(initialData: {
 }) {
     const form = useForm<PersonnelFormData>({
         name: '',
-        type: '',
+        type: initialData.type,
         birthday: '',
         license_number: '',
         address: '',
         phone_number: '',
         contact_person: '',
+        is_active: true,
     });
 
     const type = ref(initialData.type);
@@ -26,35 +27,62 @@ export function usePersonnelManagement(initialData: {
     const perPage = ref(initialData.pagination.per_page);
     const modalsManager = ref();
 
+    // Create
     const handleCreateSubmit = () => {
         form.post(route('personnel.store'), {
             onSuccess: () => {
                 form.reset();
                 form.clearErrors();
-                form.isDirty = false;
+                modalsManager.value?.closeModal('create');
             },
         });
     };
 
-    const handleTabChange = (value: string) => {
-        type.value = value;
+    // Update
+    const handleUpdateSubmit = (id: number) => {
+        form.put(route('personnel.update', id), {
+            onSuccess: () => {
+                form.reset();
+                form.clearErrors();
+                router.visit(route('personnel.index', { type: form.type }));
+            },
+        });
     };
 
-    const handleEdit = (person: Personnel) => {
-        router.get(route('personnel.edit', person.id));
-    };
-
-    const handleRemove = (person: Personnel) => {
+    // Delete
+    const handleDelete = (personnel: Personnel) => {
         if (confirm('Are you sure you want to delete this personnel?')) {
-            router.delete(route('personnel.destroy', person.id));
+            router.delete(route('personnel.destroy', personnel.id));
         }
     };
 
-    const handleView = (person: Personnel) => {
-        router.get(route('personnel.show', person.id));
+    // Restore
+    const handleRestore = (personnel: Personnel) => {
+        router.post(route('personnel.restore', personnel.id));
+    };
+
+    // Toggle Active Status
+    const handleToggleActive = (personnel: Personnel) => {
+        router.post(route('personnel.toggle-active', personnel.id));
+    };
+
+    // Navigation
+    const handleEdit = (personnel: Personnel) => {
+        router.get(route('personnel.edit', personnel.id));
+    };
+
+    const handleView = (personnel: Personnel) => {
+        router.get(route('personnel.show', personnel.id));
+    };
+
+    // UI Controls
+    const handleTabChange = (value: PersonnelType) => {
+        type.value = value;
     };
 
     const handleAddNew = () => {
+        form.reset();
+        form.clearErrors();
         modalsManager.value?.openModal('create');
     };
 
@@ -63,7 +91,7 @@ export function usePersonnelManagement(initialData: {
         console.log('View history');
     };
 
-    const handleFiltersChange = (newSearch: string, newType: string, newPage: number, newPerPage: number) => {
+    const handleFiltersChange = (newSearch: string, newType: PersonnelType, newPage: number, newPerPage: number) => {
         router.get(
             route('personnel.index'),
             {
@@ -86,11 +114,21 @@ export function usePersonnelManagement(initialData: {
         currentPage,
         perPage,
         modalsManager,
+        // Create
         handleCreateSubmit,
-        handleTabChange,
+        // Update
+        handleUpdateSubmit,
+        // Delete
+        handleDelete,
+        // Restore
+        handleRestore,
+        // Toggle Active
+        handleToggleActive,
+        // Navigation
         handleEdit,
-        handleRemove,
         handleView,
+        // UI Controls
+        handleTabChange,
         handleAddNew,
         handleViewHistory,
         handleFiltersChange,

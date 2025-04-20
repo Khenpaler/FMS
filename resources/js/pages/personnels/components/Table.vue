@@ -10,7 +10,8 @@
                     @input="$emit('update:modelValue', ($event.target as HTMLInputElement).value)"
                 />
             </div>
-            <Button variant="default" class="ml-4" @click="$emit('add-new')">
+            <Button variant="default" class="ml-4 bg-green-600 hover:bg-green-700 text-white" @click="$emit('add-new')">
+                <PlusIcon class="h-4 w-4 mr-2" />
                 Add New
             </Button>
         </div>
@@ -42,19 +43,22 @@
                     <TableCell>{{ person.phone_number }}</TableCell>
                     <TableCell>{{ person.contact_person }}</TableCell>
                     <TableCell>
-                        <Badge :variant="person.is_active ? 'default' : 'destructive'">
+                        <Badge :class="person.is_active ? 'bg-green-500 hover:bg-green-600' : 'bg-red-500 hover:bg-red-600'" class="text-white">
                             {{ person.is_active ? 'Active' : 'Inactive' }}
                         </Badge>
                     </TableCell>
                     <TableCell>
                         <div class="flex space-x-2">
-                            <Button variant="default" size="sm" @click="$emit('edit', person)">
+                            <Button variant="default" size="sm" class="bg-blue-500 hover:bg-blue-600 text-white" @click="$emit('edit', person)">
+                                <PencilIcon class="h-4 w-4 mr-1" />
                                 Edit
                             </Button>
-                            <Button variant="destructive" size="sm" @click="$emit('remove', person)">
+                            <Button variant="destructive" size="sm" class="bg-red-500 hover:bg-red-600" @click="$emit('remove', person)">
+                                <TrashIcon class="h-4 w-4 mr-1" />
                                 Remove
                             </Button>
-                            <Button variant="default" size="sm" @click="$emit('view', person)">
+                            <Button variant="default" size="sm" class="bg-purple-500 hover:bg-purple-600 text-white" @click="$emit('view', person)">
+                                <EyeIcon class="h-4 w-4 mr-1" />
                                 View Full Data
                             </Button>
                         </div>
@@ -77,19 +81,8 @@ import {
 } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-
-interface Personnel {
-    id: number;
-    name: string;
-    birthday: string;
-    age: number;
-    license_number: string;
-    address: string;
-    phone_number: string;
-    contact_person: string;
-    type: 'drivers' | 'pao' | 'dispatchers';
-    is_active: boolean;
-}
+import { PlusIcon, PencilIcon, TrashIcon, EyeIcon } from 'lucide-vue-next';
+import type { Personnel } from '../types';
 
 defineProps<{
     personnel: Personnel[];
