@@ -1,37 +1,3 @@
-<script setup lang="ts">
-import AppLayout from '@/layouts/AppLayout.vue';
-import { type BreadcrumbItem } from '@/types';
-import { Head } from '@inertiajs/vue3';
-import { Bus, Users, Wrench } from 'lucide-vue-next';
-import GoogleMap from '@/components/GoogleMap.vue';
-import BusDetailsPanel from '@/components/BusDetailsPanel.vue';
-import { Card, CardContent } from '@/components/ui/card';
-
-const breadcrumbs: BreadcrumbItem[] = [
-    {
-        title: 'Dashboard',
-        href: '/dashboard',
-    },
-];
-
-// This would typically come from your backend
-const stats = {
-    busesInOperation: 6,
-    busesInMaintenance: 0,
-    currentEmployees: 3
-};
-
-const selectedBus = {
-    id: '001',
-    driver: 'Khen Paler',
-    conductor: 'Juan Murillo',
-    plateNumber: 'NOV-1232-123-12',
-    status: 'Stationary'
-};
-
-const googleMapsApiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
-</script>
-
 <template>
     <Head title="Dashboard" />
 
@@ -86,3 +52,41 @@ const googleMapsApiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
         </div>
     </AppLayout>
 </template>
+
+<script setup lang="ts">
+import AppLayout from '@/layouts/AppLayout.vue';
+
+import { Head } from '@inertiajs/vue3';
+import { Bus, Users, Wrench } from 'lucide-vue-next';
+
+import { Card, CardContent } from '@/components/ui/card';
+
+import GoogleMap from '@/components/reusables/GoogleMap.vue';
+import BusDetailsPanel from '@/components/pages/dashboard/BusDetailsPanel.vue';
+
+import { type BreadcrumbItem } from '@/types';
+
+const breadcrumbs: BreadcrumbItem[] = [
+    {
+        title: 'Dashboard',
+        href: '/dashboard',
+    },
+];
+
+// This would typically come from your backend
+const stats = {
+    busesInOperation: 6,
+    busesInMaintenance: 0,
+    currentEmployees: 3
+};
+
+const selectedBus = {
+    id: '001',
+    driver: 'Khen Paler',
+    conductor: 'Juan Murillo',
+    plateNumber: 'NOV-1232-123-12',
+    status: 'Stationary'
+};
+
+const googleMapsApiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
+</script>

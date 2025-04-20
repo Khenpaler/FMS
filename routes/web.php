@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\PersonnelController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -12,9 +13,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
         return Inertia::render('dashboard/index');
     })->name('dashboard');
 
-    Route::get('personnel', function () {
-        return Inertia::render('personnels/index');
-    })->name('personnel');
+    // Personnel Routes
+    Route::resource('personnel', PersonnelController::class);
+    Route::put('personnel/{personnel}/restore', [PersonnelController::class, 'restore'])->name('personnel.restore');
+    Route::put('personnel/{personnel}/toggle-active', [PersonnelController::class, 'toggleActive'])->name('personnel.toggle-active');
 
     Route::get('bus-profile', function () {
         return Inertia::render('bus-profiles/index');

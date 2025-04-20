@@ -27,6 +27,7 @@
                     <TableHead class="bg-blue-50 font-bold">Address</TableHead>
                     <TableHead class="bg-blue-50 font-bold">Phone Number</TableHead>
                     <TableHead class="bg-blue-50 font-bold">Contact Person</TableHead>
+                    <TableHead class="bg-blue-50 font-bold">Status</TableHead>
                     <TableHead class="bg-blue-50 font-bold">Actions</TableHead>
                 </TableRow>
             </TableHeader>
@@ -34,12 +35,17 @@
                 <TableRow v-for="person in personnel" :key="person.id">
                     <TableCell>{{ person.name }}</TableCell>
                     <TableCell>{{ person.id }}</TableCell>
-                    <TableCell>{{ person.birthday }}</TableCell>
+                    <TableCell>{{ formatDate(person.birthday) }}</TableCell>
                     <TableCell>{{ person.age }}</TableCell>
-                    <TableCell>{{ person.licenseNumber }}</TableCell>
+                    <TableCell>{{ person.license_number }}</TableCell>
                     <TableCell>{{ person.address }}</TableCell>
-                    <TableCell>{{ person.phoneNumber }}</TableCell>
-                    <TableCell>{{ person.contactPerson }}</TableCell>
+                    <TableCell>{{ person.phone_number }}</TableCell>
+                    <TableCell>{{ person.contact_person }}</TableCell>
+                    <TableCell>
+                        <Badge :variant="person.is_active ? 'default' : 'destructive'">
+                            {{ person.is_active ? 'Active' : 'Inactive' }}
+                        </Badge>
+                    </TableCell>
                     <TableCell>
                         <div class="flex space-x-2">
                             <Button variant="default" size="sm" @click="$emit('edit', person)">
@@ -70,17 +76,19 @@ import {
     TableRow,
 } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 
 interface Personnel {
     id: number;
     name: string;
     birthday: string;
     age: number;
-    licenseNumber: string;
+    license_number: string;
     address: string;
-    phoneNumber: string;
-    contactPerson: string;
+    phone_number: string;
+    contact_person: string;
     type: 'drivers' | 'pao' | 'dispatchers';
+    is_active: boolean;
 }
 
 defineProps<{
@@ -95,4 +103,8 @@ defineEmits<{
     (e: 'view', person: Personnel): void;
     (e: 'add-new'): void;
 }>();
+
+const formatDate = (date: string) => {
+    return new Date(date).toLocaleDateString();
+};
 </script>
