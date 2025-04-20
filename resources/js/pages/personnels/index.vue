@@ -28,14 +28,15 @@
             <ModalsManager 
                 ref="modalsManager" 
                 :type="type" 
-                @submit="handleCreateSubmit" 
+                @submit="handleCreateSubmit"
+                @update="handleUpdateSubmit"
             />
         </div>
     </AppLayout>
 </template>
 
 <script setup lang="ts">
-import { watch } from 'vue';
+import { ref, watch } from 'vue';
 import { Head } from '@inertiajs/vue3';
 
 import AppLayout from '@/layouts/AppLayout.vue';
@@ -50,6 +51,9 @@ import type { BreadcrumbItem } from '@/types';
 import type { Personnel, PersonnelType } from './types';
 
 import { usePersonnelManagement } from './usePersonnelManagement';
+
+// Add type for ModalsManager
+type ModalsManagerType = InstanceType<typeof ModalsManager>;
 
 interface Props {
     personnel: Personnel[];
@@ -91,6 +95,7 @@ const {
     handleViewHistory,
     handleFiltersChange,
     handleCreateSubmit,
+    handleUpdateSubmit,
 } = usePersonnelManagement({
     type: props.type,
     search: props.search,

@@ -1,7 +1,7 @@
 <template>
+    <!-- Create Modal Suspense -->
     <Suspense>
         <template #default>
-            <!-- Create Personnel Modal -->
             <Modals
                 v-model:is-open="modals.create"
                 title="Add New Personnel"
@@ -13,7 +13,31 @@
                 <PersonnelForm ref="formRef" :type="type" @submit="$emit('submit', $event)" />
             </Modals>
         </template>
+        <template #fallback>
+            <LoadingState />
+        </template>
+    </Suspense>
 
+    <!-- Edit Modal Suspense -->
+    <Suspense>
+        <template #default>
+            <Modals
+                v-model:is-open="modals.edit"
+                title="Edit Personnel"
+                description="Update the personnel details."
+                @save="() => editFormRef?.submit()"
+                save-text="Update Personnel"
+                width="w-[95vw] sm:w-[500px] lg:w-[600px]"
+            >
+                <PersonnelForm 
+                    v-if="selectedPersonnel"
+                    ref="editFormRef" 
+                    :type="selectedPersonnel.type"
+                    :initial-data="selectedPersonnel"
+                    @submit="$emit('update', selectedPersonnel.id, $event)" 
+                />
+            </Modals>
+        </template>
         <template #fallback>
             <LoadingState />
         </template>
@@ -29,7 +53,7 @@ import type { InertiaForm } from '@inertiajs/vue3';
 
 import Modals from '@/components/reusables/Modals.vue';
 
-import type { PersonnelFormData, PersonnelType } from '../../types';
+import type { PersonnelFormData, PersonnelType, Personnel } from '../../types';
 
 // Internal Loading Component
 const LoadingState = defineComponent({
@@ -55,13 +79,17 @@ const PersonnelForm = defineAsyncComponent(() =>
 
 interface ModalState {
     create: boolean;
+    edit: boolean;
 }
 
 const modals = reactive<ModalState>({
-    create: false
+    create: false,
+    edit: false
 });
 
 const formRef = ref<{ submit: () => void } | null>(null);
+const editFormRef = ref<{ submit: () => void } | null>(null);
+const selectedPersonnel = ref<Personnel | null>(null);
 
 defineProps<{
     type: PersonnelType;
@@ -69,14 +97,21 @@ defineProps<{
 
 defineEmits<{
     (e: 'submit', form: InertiaForm<PersonnelFormData>): void;
+    (e: 'update', id: number, form: InertiaForm<PersonnelFormData>): void;
 }>();
 
 // Expose methods to control modals
-const openModal = (modalName: keyof ModalState) => {
+const openModal = (modalName: keyof ModalState, personnel?: Personnel) => {
+    if (modalName === 'edit' && personnel) {
+        selectedPersonnel.value = personnel;
+    }
     modals[modalName] = true;
 };
 
 const closeModal = (modalName: keyof ModalState) => {
+    if (modalName === 'edit') {
+        selectedPersonnel.value = null;
+    }
     modals[modalName] = false;
 };
 

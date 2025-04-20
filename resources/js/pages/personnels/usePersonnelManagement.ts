@@ -6,6 +6,12 @@ import { useToast } from 'vue-toastification';
 
 import type { PersonnelFormData, Personnel, PersonnelType } from './types';
 
+// Add interface for ModalsManager
+interface ModalsManager {
+    openModal: (modalName: 'create' | 'edit', personnel?: Personnel) => void;
+    closeModal: (modalName: 'create' | 'edit') => void;
+}
+
 export function usePersonnelManagement(initialData: {
     type: PersonnelType;
     search?: string;
@@ -30,7 +36,7 @@ export function usePersonnelManagement(initialData: {
     const search = ref(initialData.search || '');
     const currentPage = ref(initialData.pagination.current_page);
     const perPage = ref(initialData.pagination.per_page);
-    const modalsManager = ref();
+    const modalsManager = ref<ModalsManager | null>(null);
 
     // Create
     const handleCreateSubmit = (submittedForm: ReturnType<typeof useForm<PersonnelFormData>>) => {
@@ -61,16 +67,26 @@ export function usePersonnelManagement(initialData: {
     };
 
     // Update
-    const handleUpdateSubmit = (id: number) => {
-        router.put(route('personnel.update', id), form.data(), {
+    const handleUpdateSubmit = (id: number, submittedForm: ReturnType<typeof useForm<PersonnelFormData>>) => {
+        const formData = {
+            ...submittedForm.data(),
+            type: type.value
+        };
+
+        router.put(route('personnel.update', id), formData, {
             onSuccess: () => {
                 toast.success('Personnel updated successfully');
-                form.reset();
-                form.clearErrors();
-                router.visit(route('personnel.index', { type: form.type }));
+                submittedForm.reset();
+                submittedForm.clearErrors();
+                modalsManager.value?.closeModal('edit');
+                router.visit(route('personnel.index', { type: type.value }));
             },
-            onError: () => {
+            onError: (errors: Record<string, string>) => {
                 toast.error('Failed to update personnel');
+                console.error('Form errors:', errors);
+                Object.keys(errors).forEach(key => {
+                    submittedForm.setError(key, errors[key]);
+                });
             }
         } as any);
     };
@@ -108,7 +124,9 @@ export function usePersonnelManagement(initialData: {
 
     // Navigation
     const handleEdit = (personnel: Personnel) => {
-        router.get(route('personnel.edit', personnel.id));
+        console.log('handleEdit called with:', personnel);
+        console.log('modalsManager ref:', modalsManager.value);
+        modalsManager.value?.openModal('edit', personnel);
     };
 
     const handleView = (personnel: Personnel) => {

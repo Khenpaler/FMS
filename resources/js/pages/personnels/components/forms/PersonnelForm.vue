@@ -99,7 +99,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import InputError from '@/components/ui/input-error.vue';
 
-import type { PersonnelFormData } from '../../types';
+import type { PersonnelFormData, Personnel } from '../../types';
 
 const emit = defineEmits<{
     (e: 'submit', form: ReturnType<typeof useForm<PersonnelFormData>>): void;
@@ -107,6 +107,7 @@ const emit = defineEmits<{
 
 const props = defineProps<{
     type: PersonnelFormData['type'];
+    initialData?: Personnel;
 }>();
 
 const typeDisplay = computed(() => {
@@ -123,13 +124,14 @@ const typeDisplay = computed(() => {
 });
 
 const form = useForm<PersonnelFormData>({
-    name: '',
+    name: props.initialData?.name ?? '',
     type: props.type,
-    birthday: '',
-    license_number: '',
-    address: '',
-    phone_number: '',
-    contact_person: '',
+    birthday: props.initialData?.birthday ?? '',
+    license_number: props.initialData?.license_number ?? '',
+    address: props.initialData?.address ?? '',
+    phone_number: props.initialData?.phone_number ?? '',
+    contact_person: props.initialData?.contact_person ?? '',
+    is_active: props.initialData?.is_active ?? true,
 });
 
 // Watch for type changes and update form

@@ -20,7 +20,18 @@
             <TableCaption>List of Personnel</TableCaption>
             <TableHeader>
                 <TableRow>
-                    <TableHead class="bg-blue-50 font-bold">Name</TableHead>
+                    <TableHead 
+                        class="bg-blue-50 font-bold cursor-pointer hover:bg-blue-100 transition-colors"
+                        @click="handleSort('name')"
+                    >
+                        <div class="flex items-center gap-2">
+                            Name
+                            <ArrowUpDown class="h-4 w-4" :class="{
+                                'text-blue-600': sortField === 'name',
+                                'rotate-180': sortField === 'name' && sortDirection === 'desc'
+                            }" />
+                        </div>
+                    </TableHead>
                     <TableHead class="bg-blue-50 font-bold">ID</TableHead>
                     <TableHead class="bg-blue-50 font-bold">Birthday</TableHead>
                     <TableHead class="bg-blue-50 font-bold">Age</TableHead>
@@ -33,7 +44,7 @@
                 </TableRow>
             </TableHeader>
             <TableBody>
-                <TableRow v-for="person in personnel" :key="person.id">
+                <TableRow v-for="person in sortedPersonnel" :key="person.id">
                     <TableCell>{{ person.name }}</TableCell>
                     <TableCell>{{ person.id }}</TableCell>
                     <TableCell>{{ formatDate(person.birthday) }}</TableCell>
@@ -49,7 +60,10 @@
                     </TableCell>
                     <TableCell>
                         <div class="flex space-x-2">
-                            <Button variant="default" size="sm" class="bg-blue-500 hover:bg-blue-600 text-white" @click="$emit('edit', person)">
+                            <Button variant="default" size="sm" class="bg-blue-500 hover:bg-blue-600 text-white" @click="() => {
+                                console.log('Edit button clicked', person);
+                                $emit('edit', person);
+                            }">
                                 <PencilIcon class="h-4 w-4 mr-1" />
                                 Edit
                             </Button>
@@ -70,7 +84,8 @@
 </template>
 
 <script setup lang="ts">
-import { PlusIcon, PencilIcon, TrashIcon, EyeIcon } from 'lucide-vue-next';
+import { ref, computed } from 'vue';
+import { PlusIcon, PencilIcon, TrashIcon, EyeIcon, ArrowUpDown } from 'lucide-vue-next';
 
 import {
     Table,
@@ -86,7 +101,7 @@ import { Badge } from '@/components/ui/badge';
 
 import type { Personnel } from '../types';
 
-defineProps<{
+const props = defineProps<{
     personnel: Personnel[];
     modelValue: string;
 }>();
@@ -98,6 +113,35 @@ defineEmits<{
     (e: 'view', person: Personnel): void;
     (e: 'add-new'): void;
 }>();
+
+const sortField = ref<'name' | null>(null);
+const sortDirection = ref<'asc' | 'desc'>('asc');
+
+const handleSort = (field: 'name') => {
+    if (sortField.value === field) {
+        // Toggle direction if same field
+        sortDirection.value = sortDirection.value === 'asc' ? 'desc' : 'asc';
+    } else {
+        // New field, set to asc
+        sortField.value = field;
+        sortDirection.value = 'asc';
+    }
+};
+
+const sortedPersonnel = computed(() => {
+    if (!sortField.value) return props.personnel;
+
+    return [...props.personnel].sort((a, b) => {
+        const aValue = a[sortField.value!];
+        const bValue = b[sortField.value!];
+
+        if (sortDirection.value === 'asc') {
+            return aValue.localeCompare(bValue);
+        } else {
+            return bValue.localeCompare(aValue);
+        }
+    });
+});
 
 const formatDate = (date: string) => {
     return new Date(date).toLocaleDateString();
