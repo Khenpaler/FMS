@@ -10,7 +10,7 @@
                 save-text="Save Personnel"
                 width="w-[95vw] sm:w-[500px] lg:w-[600px]"
             >
-                <PersonnelForm ref="formRef" @submit="handleCreateSubmit" />
+                <PersonnelForm ref="formRef" :type="type" @submit="$emit('submit', $event)" />
             </Modals>
         </template>
 
@@ -24,9 +24,12 @@
 
 <script setup lang="ts">
 import { reactive, defineAsyncComponent, defineComponent, ref } from 'vue';
-import Modals from '@/components/reusables/Modals.vue';
-import type { PersonnelFormData } from '../../types';
+
 import type { InertiaForm } from '@inertiajs/vue3';
+
+import Modals from '@/components/reusables/Modals.vue';
+
+import type { PersonnelFormData, PersonnelType } from '../../types';
 
 // Internal Loading Component
 const LoadingState = defineComponent({
@@ -52,7 +55,6 @@ const PersonnelForm = defineAsyncComponent(() =>
 
 interface ModalState {
     create: boolean;
-    // Add more modal states here as needed
 }
 
 const modals = reactive<ModalState>({
@@ -61,6 +63,14 @@ const modals = reactive<ModalState>({
 
 const formRef = ref<{ submit: () => void } | null>(null);
 
+defineProps<{
+    type: PersonnelType;
+}>();
+
+defineEmits<{
+    (e: 'submit', form: InertiaForm<PersonnelFormData>): void;
+}>();
+
 // Expose methods to control modals
 const openModal = (modalName: keyof ModalState) => {
     modals[modalName] = true;
@@ -68,16 +78,6 @@ const openModal = (modalName: keyof ModalState) => {
 
 const closeModal = (modalName: keyof ModalState) => {
     modals[modalName] = false;
-};
-
-const handleCreateSubmit = (form: InertiaForm<PersonnelFormData>) => {
-    form.post(route('personnel.store'), {
-        onSuccess: () => {
-            form.reset();
-            form.clearErrors();
-            closeModal('create');
-        },
-    });
 };
 
 defineExpose({

@@ -70,6 +70,8 @@
 </template>
 
 <script setup lang="ts">
+import { PlusIcon, PencilIcon, TrashIcon, EyeIcon } from 'lucide-vue-next';
+
 import {
     Table,
     TableBody,
@@ -81,7 +83,7 @@ import {
 } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { PlusIcon, PencilIcon, TrashIcon, EyeIcon } from 'lucide-vue-next';
+
 import type { Personnel } from '../types';
 
 defineProps<{

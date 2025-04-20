@@ -29,8 +29,10 @@
 </template>
 
 <script setup lang="ts">
-import { Button } from '@/components/ui/button';
 import { ClockIcon } from 'lucide-vue-next';
+
+import { Button } from '@/components/ui/button';
+
 import type { PersonnelType } from '../types';
 
 interface Tab {

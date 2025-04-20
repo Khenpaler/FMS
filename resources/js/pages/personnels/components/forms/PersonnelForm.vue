@@ -16,16 +16,13 @@
             <!-- Type -->
             <div class="space-y-2">
                 <Label for="type">Type</Label>
-                <Select v-model="form.type">
-                    <SelectTrigger :error="form.errors.type">
-                        <SelectValue placeholder="Select type" />
-                    </SelectTrigger>
-                    <SelectContent>
-                        <SelectItem value="drivers">Driver</SelectItem>
-                        <SelectItem value="pao">Passenger Assistant Officer</SelectItem>
-                        <SelectItem value="dispatchers">Dispatcher</SelectItem>
-                    </SelectContent>
-                </Select>
+                <Input 
+                    id="type"
+                    v-model="form.type"
+                    :error="form.errors.type"
+                    disabled
+                    :value="typeDisplay"
+                />
                 <InputError :message="form.errors.type" />
             </div>
 
@@ -93,17 +90,12 @@
 </template>
 
 <script setup lang="ts">
+import { computed, watch } from 'vue';
+
 import { useForm } from '@inertiajs/vue3';
 
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { 
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import InputError from '@/components/ui/input-error.vue';
 
@@ -113,15 +105,37 @@ const emit = defineEmits<{
     (e: 'submit', form: ReturnType<typeof useForm<PersonnelFormData>>): void;
 }>();
 
+const props = defineProps<{
+    type: PersonnelFormData['type'];
+}>();
+
+const typeDisplay = computed(() => {
+    switch (props.type) {
+        case 'drivers':
+            return 'Driver';
+        case 'pao':
+            return 'Passenger Assistant Officer';
+        case 'dispatchers':
+            return 'Dispatcher';
+        default:
+            return '';
+    }
+});
+
 const form = useForm<PersonnelFormData>({
     name: '',
-    type: 'drivers' as const,
+    type: props.type,
     birthday: '',
     license_number: '',
     address: '',
     phone_number: '',
     contact_person: '',
 });
+
+// Watch for type changes and update form
+watch(() => props.type, (newType) => {
+    form.type = newType;
+}, { immediate: true });
 
 const submit = () => {
     emit('submit', form);

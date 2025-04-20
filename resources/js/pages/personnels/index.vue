@@ -25,7 +25,11 @@
                 :current-items="personnel.length"
             />
 
-            <ModalsManager ref="modalsManager" />
+            <ModalsManager 
+                ref="modalsManager" 
+                :type="type" 
+                @submit="handleCreateSubmit" 
+            />
         </div>
     </AppLayout>
 </template>
@@ -86,6 +90,7 @@ const {
     handleAddNew,
     handleViewHistory,
     handleFiltersChange,
+    handleCreateSubmit,
 } = usePersonnelManagement({
     type: props.type,
     search: props.search,

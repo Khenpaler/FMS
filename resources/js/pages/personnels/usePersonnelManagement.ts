@@ -1,5 +1,9 @@
 import { ref } from 'vue';
+
 import { useForm, router } from '@inertiajs/vue3';
+
+import { useToast } from 'vue-toastification';
+
 import type { PersonnelFormData, Personnel, PersonnelType } from './types';
 
 export function usePersonnelManagement(initialData: {
@@ -10,6 +14,7 @@ export function usePersonnelManagement(initialData: {
         per_page: number;
     };
 }) {
+    const toast = useToast();
     const form = useForm<PersonnelFormData>({
         name: '',
         type: initialData.type,
@@ -28,37 +33,72 @@ export function usePersonnelManagement(initialData: {
     const modalsManager = ref();
 
     // Create
-    const handleCreateSubmit = () => {
-        form.post(route('personnel.store'), {
+    const handleCreateSubmit = (submittedForm: ReturnType<typeof useForm<PersonnelFormData>>) => {
+        // Ensure type is set correctly
+        const formData = {
+            ...submittedForm.data(),
+            type: type.value
+        };
+        
+        router.post(route('personnel.store'), formData, {
             onSuccess: () => {
-                form.reset();
-                form.clearErrors();
+                toast.success('Personnel created successfully');
+                submittedForm.reset();
+                submittedForm.clearErrors();
                 modalsManager.value?.closeModal('create');
+                // Refresh the page to show new data
+                router.visit(route('personnel.index', { type: type.value }));
             },
-        });
+            onError: (errors: Record<string, string>) => {
+                toast.error('Failed to create personnel');
+                console.error('Form errors:', errors);
+                // Pass errors back to the form
+                Object.keys(errors).forEach(key => {
+                    submittedForm.setError(key, errors[key]);
+                });
+            }
+        } as any);
     };
 
     // Update
     const handleUpdateSubmit = (id: number) => {
-        form.put(route('personnel.update', id), {
+        router.put(route('personnel.update', id), form.data(), {
             onSuccess: () => {
+                toast.success('Personnel updated successfully');
                 form.reset();
                 form.clearErrors();
                 router.visit(route('personnel.index', { type: form.type }));
             },
-        });
+            onError: () => {
+                toast.error('Failed to update personnel');
+            }
+        } as any);
     };
 
     // Delete
     const handleDelete = (personnel: Personnel) => {
         if (confirm('Are you sure you want to delete this personnel?')) {
-            router.delete(route('personnel.destroy', personnel.id));
+            router.delete(route('personnel.destroy', personnel.id), {
+                onSuccess: () => {
+                    toast.success('Personnel deleted successfully');
+                },
+                onError: () => {
+                    toast.error('Failed to delete personnel');
+                }
+            } as any);
         }
     };
 
     // Restore
     const handleRestore = (personnel: Personnel) => {
-        router.post(route('personnel.restore', personnel.id));
+        router.post(route('personnel.restore', personnel.id), {
+            onSuccess: () => {
+                toast.success('Personnel restored successfully');
+            },
+            onError: () => {
+                toast.error('Failed to delete personnel');
+            }
+        } as any);
     };
 
     // Toggle Active Status

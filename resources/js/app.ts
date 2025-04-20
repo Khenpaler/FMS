@@ -6,6 +6,8 @@ import type { DefineComponent } from 'vue';
 import { createApp, h } from 'vue';
 import { ZiggyVue } from 'ziggy-js';
 import { initializeTheme } from './composables/useAppearance';
+import Toast, { type PluginOptions } from 'vue-toastification';
+import 'vue-toastification/dist/index.css';
 
 // Extend ImportMeta interface for Vite...
 declare module 'vite/client' {
@@ -22,13 +24,30 @@ declare module 'vite/client' {
 
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 
+// Configure toast options
+const toastOptions: PluginOptions = {
+    position: 'top-right',
+    timeout: 5000,
+    closeOnClick: true,
+    pauseOnFocusLoss: true,
+    pauseOnHover: true,
+    draggable: true,
+    draggablePercent: 0.6,
+    showCloseButtonOnHover: false,
+    hideProgressBar: false,
+    closeButton: 'button',
+    icon: true,
+    rtl: false
+};
+
 createInertiaApp({
     title: (title) => `${title} - ${appName}`,
     resolve: (name) => resolvePageComponent(`./pages/${name}.vue`, import.meta.glob<DefineComponent>('./pages/**/*.vue')),
     setup({ el, App, props, plugin }) {
-        createApp({ render: () => h(App, props) })
-            .use(plugin)
+        const app = createApp({ render: () => h(App, props) });
+        app.use(plugin)
             .use(ZiggyVue)
+            .use(Toast, toastOptions)
             .mount(el);
     },
     progress: {

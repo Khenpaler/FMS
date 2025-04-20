@@ -14,7 +14,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     })->name('dashboard');
 
     // Personnel Routes
-    Route::resource('personnel', PersonnelController::class);
+    Route::resource('personnel', PersonnelController::class)->except(['create', 'edit']);
     Route::put('personnel/{personnel}/restore', [PersonnelController::class, 'restore'])->name('personnel.restore');
     Route::put('personnel/{personnel}/toggle-active', [PersonnelController::class, 'toggleActive'])->name('personnel.toggle-active');
 
