@@ -8,7 +8,7 @@
                 description="Fill in the details to add a new personnel."
                 @save="() => {}"
                 save-text="Save Personnel"
-                width="600px"
+                width="w-[95vw] sm:w-[500px] lg:w-[600px]"
             >
                 <PersonnelForm @submit="handleCreateSubmit" />
             </Modals>

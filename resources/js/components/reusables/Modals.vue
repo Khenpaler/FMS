@@ -3,11 +3,11 @@
         <DialogContent
             :class="[
                 'fixed left-[50%] top-[3%] -translate-x-1/2 translate-y-0',
-                'z-50 grid w-full gap-4 rounded-lg border p-6 shadow-lg',
+                'z-50 grid w-[95vw] gap-4 rounded-lg border p-4 sm:p-6 shadow-lg',
                 'bg-background data-[state=open]:animate-in data-[state=closed]:animate-out',
                 'data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0',
                 'data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95',
-                width ? `max-w-[${width}]` : 'sm:max-w-lg'
+                width || 'sm:max-w-lg'
             ]"
         >
             <DialogHeader>
