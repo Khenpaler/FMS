@@ -2,11 +2,12 @@
     <Dialog :open="isOpen" @update:open="$emit('update:isOpen', $event)">
         <DialogContent
             :class="[
-                'fixed left-[50%] top-[3%] -translate-x-1/2 translate-y-0',
-                'z-50 grid w-[95vw] gap-4 rounded-lg border p-4 sm:p-6 shadow-lg',
+                'fixed left-[50%] top-[50%] -translate-x-1/2 -translate-y-1/2',
+                'z-50 grid gap-4 rounded-lg border p-4 sm:p-6 shadow-lg',
                 'bg-background data-[state=open]:animate-in data-[state=closed]:animate-out',
                 'data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0',
                 'data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95',
+                'max-h-[90vh] overflow-y-auto',
                 width || 'sm:max-w-lg'
             ]"
         >

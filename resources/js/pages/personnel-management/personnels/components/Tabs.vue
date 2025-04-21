@@ -32,6 +32,7 @@
 import { ClockIcon } from 'lucide-vue-next';
 import { Button } from '@/components/ui/button';
 import type { Position } from '../types';
+import { watch } from 'vue';
 
 interface Tab {
     id: Position;
@@ -44,7 +45,7 @@ const tabs: Tab[] = [
     { id: 'dispatcher', name: 'Dispatcher' },
 ] as const;
 
-defineProps<{
+const props = defineProps<{
     modelValue: Position;
 }>();
 
@@ -52,4 +53,13 @@ defineEmits<{
     (e: 'update:model-value', value: Position): void;
     (e: 'view-history'): void;
 }>();
+
+// Watch for changes in the selected position
+watch(
+    () => props.modelValue,
+    (newPosition, oldPosition) => {
+        console.log(`Position changed from ${oldPosition} to ${newPosition}`);
+        // You can add additional side effects here
+    }
+);
 </script>

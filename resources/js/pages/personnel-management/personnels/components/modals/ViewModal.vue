@@ -1,17 +1,17 @@
 <template>
-    <div class="max-h-[75vh] overflow-y-auto">
-        <div class="space-y-6">
+    <div class="max-h-[85vh] overflow-y-auto">
+        <div class="flex gap-8">
             <!-- Profile Image Section -->
-            <div class="flex justify-center">
+            <div class="flex-shrink-0">
                 <div class="relative">
                     <img 
                         :src="person.user_profile_image ? `/storage/${person.user_profile_image}` : '/path/to/default-avatar.png'" 
                         alt="Profile"
-                        class="w-24 h-24 rounded-full object-cover border-2 border-blue-100"
+                        class="w-96 h-1/2 rounded-lg object-cover"
                     />
                     <Badge 
                         :class="getStatusColor(person.status)" 
-                        class="absolute -bottom-2 -right-2 px-2 text-xs"
+                        class="absolute bottom-3 right-3 px-3 py-1 text-base"
                     >
                         {{ formatStatus(person.status) }}
                     </Badge>
@@ -19,14 +19,14 @@
             </div>
 
             <!-- Information Sections -->
-            <div class="space-y-6">
+            <div class="flex-grow space-y-6">
                 <!-- Personal Information Section -->
-                <div class="bg-gray-50 rounded-lg p-4">
-                    <h3 class="text-md font-semibold mb-3 text-blue-600">Personal Information</h3>
-                    <div class="grid grid-cols-2 gap-3 text-sm">
+                <div class="bg-gray-50 rounded-lg p-6">
+                    <h3 class="text-lg font-semibold mb-4 text-blue-600">Personal Information</h3>
+                    <div class="grid grid-cols-2 gap-4 text-sm">
                         <div class="col-span-2">
                             <label class="text-xs font-medium text-gray-500">Full Name</label>
-                            <p class="text-gray-900">{{ `${person.last_name}, ${person.first_name} ${person.middle_initial || ''}` }}</p>
+                            <p class="text-gray-900 text-lg font-medium">{{ `${person.last_name}, ${person.first_name} ${person.middle_initial || ''}` }}</p>
                         </div>
                         <div>
                             <label class="text-xs font-medium text-gray-500">Date of Birth</label>
@@ -40,9 +40,9 @@
                 </div>
 
                 <!-- Employment Information Section -->
-                <div class="bg-gray-50 rounded-lg p-4">
-                    <h3 class="text-md font-semibold mb-3 text-blue-600">Employment Information</h3>
-                    <div class="grid grid-cols-2 gap-3 text-sm">
+                <div class="bg-gray-50 rounded-lg p-6">
+                    <h3 class="text-lg font-semibold mb-4 text-blue-600">Employment Information</h3>
+                    <div class="grid grid-cols-2 gap-4 text-sm">
                         <div>
                             <label class="text-xs font-medium text-gray-500">Position</label>
                             <p class="text-gray-900">{{ formatPosition(person.position) }}</p>
@@ -59,14 +59,14 @@
                 </div>
 
                 <!-- Contact Information Section -->
-                <div class="bg-gray-50 rounded-lg p-4">
-                    <h3 class="text-md font-semibold mb-3 text-blue-600">Contact Information</h3>
-                    <div class="grid gap-3 text-sm">
+                <div class="bg-gray-50 rounded-lg p-6">
+                    <h3 class="text-lg font-semibold mb-4 text-blue-600">Contact Information</h3>
+                    <div class="grid gap-4 text-sm">
                         <div>
                             <label class="text-xs font-medium text-gray-500">Address</label>
                             <p class="text-gray-900">{{ person.address }}</p>
                         </div>
-                        <div class="grid grid-cols-2 gap-3">
+                        <div class="grid grid-cols-2 gap-4">
                             <div>
                                 <label class="text-xs font-medium text-gray-500">Contact Number</label>
                                 <p class="text-gray-900">{{ person.contact_number }}</p>

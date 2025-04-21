@@ -191,6 +191,7 @@ export function usePersonnelManagement(initialData: {
             {
                 preserveState: true,
                 preserveScroll: true,
+                replace: true,
             }
         );
     };

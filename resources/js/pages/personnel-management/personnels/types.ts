@@ -1,4 +1,4 @@
-export type Position = 'operation_manager' | 'dispatcher' | 'driver' | 'passenger_assistant_officer';
+export type Position = 'driver' | 'dispatcher' | 'passenger_assistant_officer';
 export type Status = 'terminate' | 'on_duty' | 'off_duty';
 export type Sex = 'Male' | 'Female';
 

@@ -33,6 +33,7 @@
                 :show-header="true"
                 :show-footer="true"
             >
+            
                 <PersonnelForm 
                     v-if="selectedPersonnel"
                     ref="editFormRef" 
@@ -54,7 +55,7 @@
                 v-model:is-open="modals.view"
                 title="Personnel Information"
                 description="Complete biodata of the personnel"
-                width="w-[95vw] sm:w-[500px] lg:w-[600px]"
+                width="w-[95vw] sm:w-[1200px] lg:w-[1400px]"
                 :show-header="true"
                 :show-footer="true"
             >

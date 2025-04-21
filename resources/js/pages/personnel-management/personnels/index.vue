@@ -36,7 +36,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue';
+import { ref, watch, onMounted } from 'vue';
 import { Head } from '@inertiajs/vue3';
 
 import AppLayout from '@/layouts/AppLayout.vue';
@@ -87,12 +87,8 @@ const {
     search,
     currentPage,
     perPage,
-    modalsManager,
     handleTabChange,
-    handleEdit,
     handleDelete,
-    handleView,
-    handleAddNew,
     handleViewHistory,
     handleFiltersChange,
     handleCreateSubmit,
@@ -107,6 +103,13 @@ const {
 });
 
 const modalsManagerRef = ref<{ openModal: (name: string, personnel?: Personnel) => void } | null>(null);
+
+// Apply initial filter when component mounts
+onMounted(() => {
+    // Set default position to 'driver' if none provided
+    const initialPosition = props.position || 'driver';
+    handleFiltersChange(props.search || '', initialPosition, props.pagination.current_page, props.pagination.per_page);
+});
 
 // Watch for changes in filters and pagination
 watch(
