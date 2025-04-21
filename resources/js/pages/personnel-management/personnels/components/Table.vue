@@ -22,40 +22,40 @@
                 <TableRow>
                     <TableHead 
                         class="bg-blue-50 font-bold cursor-pointer hover:bg-blue-100 transition-colors"
-                        @click="handleSort('name')"
+                        @click="handleSort('last_name')"
                     >
                         <div class="flex items-center gap-2">
                             Name
                             <ArrowUpDown class="h-4 w-4" :class="{
-                                'text-blue-600': sortField === 'name',
-                                'rotate-180': sortField === 'name' && sortDirection === 'desc'
+                                'text-blue-600': sortField === 'last_name',
+                                'rotate-180': sortField === 'last_name' && sortDirection === 'desc'
                             }" />
                         </div>
                     </TableHead>
                     <TableHead class="bg-blue-50 font-bold">ID</TableHead>
-                    <TableHead class="bg-blue-50 font-bold">Birthday</TableHead>
-                    <TableHead class="bg-blue-50 font-bold">Age</TableHead>
+                    <TableHead class="bg-blue-50 font-bold">Position</TableHead>
+                    <TableHead class="bg-blue-50 font-bold">Date of Birth</TableHead>
+                    <TableHead class="bg-blue-50 font-bold">Sex</TableHead>
                     <TableHead class="bg-blue-50 font-bold">License Number</TableHead>
                     <TableHead class="bg-blue-50 font-bold">Address</TableHead>
-                    <TableHead class="bg-blue-50 font-bold">Phone Number</TableHead>
-                    <TableHead class="bg-blue-50 font-bold">Contact Person</TableHead>
+                    <TableHead class="bg-blue-50 font-bold">Contact Number</TableHead>
                     <TableHead class="bg-blue-50 font-bold">Status</TableHead>
                     <TableHead class="bg-blue-50 font-bold">Actions</TableHead>
                 </TableRow>
             </TableHeader>
             <TableBody>
-                <TableRow v-for="person in sortedPersonnel" :key="person.id">
-                    <TableCell>{{ person.name }}</TableCell>
-                    <TableCell>{{ person.id }}</TableCell>
-                    <TableCell>{{ formatDate(person.birthday) }}</TableCell>
-                    <TableCell>{{ person.age }}</TableCell>
+                <TableRow v-for="person in sortedPersonnel" :key="person.user_profile_id">
+                    <TableCell>{{ `${person.last_name}, ${person.first_name} ${person.middle_initial || ''}` }}</TableCell>
+                    <TableCell>{{ person.user_profile_id }}</TableCell>
+                    <TableCell>{{ formatPosition(person.position) }}</TableCell>
+                    <TableCell>{{ formatDate(person.date_of_birth) }}</TableCell>
+                    <TableCell>{{ person.sex }}</TableCell>
                     <TableCell>{{ person.license_number }}</TableCell>
                     <TableCell>{{ person.address }}</TableCell>
-                    <TableCell>{{ person.phone_number }}</TableCell>
-                    <TableCell>{{ person.contact_person }}</TableCell>
+                    <TableCell>{{ person.contact_number }}</TableCell>
                     <TableCell>
-                        <Badge :class="person.is_active ? 'bg-green-500 hover:bg-green-600' : 'bg-red-500 hover:bg-red-600'" class="text-white">
-                            {{ person.is_active ? 'Active' : 'Inactive' }}
+                        <Badge :class="getStatusColor(person.status)">
+                            {{ formatStatus(person.status) }}
                         </Badge>
                     </TableCell>
                     <TableCell>
@@ -71,7 +71,12 @@
                                 <TrashIcon class="h-4 w-4 mr-1" />
                                 Remove
                             </Button>
-                            <Button variant="default" size="sm" class="bg-purple-500 hover:bg-purple-600 text-white" @click="$emit('view', person)">
+                            <Button 
+                                variant="default" 
+                                size="sm" 
+                                class="bg-purple-500 hover:bg-purple-600 text-white" 
+                                @click="$emit('view', person)"
+                            >
                                 <EyeIcon class="h-4 w-4 mr-1" />
                                 View Full Data
                             </Button>
@@ -99,7 +104,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 
-import type { Personnel } from '../types';
+import type { Personnel, Position, Status } from '../types';
 
 const props = defineProps<{
     personnel: Personnel[];
@@ -114,15 +119,13 @@ defineEmits<{
     (e: 'add-new'): void;
 }>();
 
-const sortField = ref<'name' | null>(null);
+const sortField = ref<'last_name' | null>(null);
 const sortDirection = ref<'asc' | 'desc'>('asc');
 
-const handleSort = (field: 'name') => {
+const handleSort = (field: 'last_name') => {
     if (sortField.value === field) {
-        // Toggle direction if same field
         sortDirection.value = sortDirection.value === 'asc' ? 'desc' : 'asc';
     } else {
-        // New field, set to asc
         sortField.value = field;
         sortDirection.value = 'asc';
     }
@@ -145,5 +148,26 @@ const sortedPersonnel = computed(() => {
 
 const formatDate = (date: string) => {
     return new Date(date).toLocaleDateString();
+};
+
+const formatPosition = (position: Position) => {
+    return position.split('_').map(word => 
+        word.charAt(0).toUpperCase() + word.slice(1)
+    ).join(' ');
+};
+
+const formatStatus = (status: Status) => {
+    return status.split('_').map(word => 
+        word.charAt(0).toUpperCase() + word.slice(1)
+    ).join(' ');
+};
+
+const getStatusColor = (status: Status) => {
+    const colors = {
+        'on_duty': 'bg-green-500 hover:bg-green-600',
+        'off_duty': 'bg-yellow-500 hover:bg-yellow-600',
+        'terminate': 'bg-red-500 hover:bg-red-600'
+    };
+    return `${colors[status]} text-white`;
 };
 </script>

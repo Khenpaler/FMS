@@ -30,28 +30,26 @@
 
 <script setup lang="ts">
 import { ClockIcon } from 'lucide-vue-next';
-
 import { Button } from '@/components/ui/button';
-
-import type { PersonnelType } from '../types';
+import type { Position } from '../types';
 
 interface Tab {
-    id: PersonnelType;
+    id: Position;
     name: string;
 }
 
 const tabs: Tab[] = [
-    { id: 'drivers', name: 'Drivers' },
-    { id: 'pao', name: 'Passenger Assistant Officer' },
-    { id: 'dispatchers', name: 'Dispatchers' }
+    { id: 'driver', name: 'Driver' },
+    { id: 'passenger_assistant_officer', name: 'Passenger Assistant Officer' },
+    { id: 'dispatcher', name: 'Dispatcher' },
 ] as const;
 
 defineProps<{
-    modelValue: PersonnelType;
+    modelValue: Position;
 }>();
 
 defineEmits<{
-    (e: 'update:model-value', value: PersonnelType): void;
+    (e: 'update:model-value', value: Position): void;
     (e: 'view-history'): void;
 }>();
 </script>

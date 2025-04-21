@@ -29,6 +29,7 @@ class UserFactory extends Factory
             'email_verified_at' => now(),
             'password' => static::$password ??= Hash::make('password'),
             'remember_token' => Str::random(10),
+            'role_id' => 1, // Default to operation_manager, or you could use fake()->numberBetween(1, 4)
         ];
     }
 

@@ -9,8 +9,10 @@
                 @save="() => formRef?.submit()"
                 save-text="Save Personnel"
                 width="w-[95vw] sm:w-[500px] lg:w-[600px]"
+                :show-header="true"
+                :show-footer="true"
             >
-                <PersonnelForm ref="formRef" :type="type" @submit="$emit('submit', $event)" />
+                <PersonnelForm ref="formRef" :position="position" @submit="$emit('submit', $event)" />
             </Modals>
         </template>
         <template #fallback>
@@ -28,14 +30,42 @@
                 @save="() => editFormRef?.submit()"
                 save-text="Update Personnel"
                 width="w-[95vw] sm:w-[500px] lg:w-[600px]"
+                :show-header="true"
+                :show-footer="true"
             >
                 <PersonnelForm 
                     v-if="selectedPersonnel"
                     ref="editFormRef" 
-                    :type="selectedPersonnel.type"
+                    :position="selectedPersonnel.position"
                     :initial-data="selectedPersonnel"
-                    @submit="$emit('update', selectedPersonnel.id, $event)" 
+                    @submit="$emit('update', Number(selectedPersonnel.user_profile_id), $event)" 
                 />
+            </Modals>
+        </template>
+        <template #fallback>
+            <LoadingState />
+        </template>
+    </Suspense>
+
+    <!-- View Modal Suspense -->
+    <Suspense>
+        <template #default>
+            <Modals
+                v-model:is-open="modals.view"
+                title="Personnel Information"
+                description="Complete biodata of the personnel"
+                width="w-[95vw] sm:w-[500px] lg:w-[600px]"
+                :show-header="true"
+                :show-footer="true"
+            >
+                <ViewModal 
+                    v-if="selectedPersonnel"
+                    :person="selectedPersonnel"
+                />
+                
+                <template #footer>
+                    <Button variant="default" @click="closeModal('view')">Close</Button>
+                </template>
             </Modals>
         </template>
         <template #fallback>
@@ -52,8 +82,9 @@ import { reactive, defineAsyncComponent, defineComponent, ref } from 'vue';
 import type { InertiaForm } from '@inertiajs/vue3';
 
 import Modals from '@/components/reusables/Modals.vue';
+import { Button } from '@/components/ui/button';
 
-import type { PersonnelFormData, PersonnelType, Personnel } from '../../types';
+import type { PersonnelFormData, Position, Personnel } from '../../types';
 
 // Internal Loading Component
 const LoadingState = defineComponent({
@@ -76,15 +107,23 @@ const PersonnelForm = defineAsyncComponent(() =>
             throw error;
         })
 );
-
+const ViewModal = defineAsyncComponent(() => 
+    import('./ViewModal.vue')
+        .catch(error => {
+            console.error('Error loading ViewModal:', error);
+            throw error;
+        })
+);
 interface ModalState {
     create: boolean;
     edit: boolean;
+    view: boolean;
 }
 
 const modals = reactive<ModalState>({
     create: false,
-    edit: false
+    edit: false,
+    view: false
 });
 
 const formRef = ref<{ submit: () => void } | null>(null);
@@ -92,7 +131,7 @@ const editFormRef = ref<{ submit: () => void } | null>(null);
 const selectedPersonnel = ref<Personnel | null>(null);
 
 defineProps<{
-    type: PersonnelType;
+    position: Position;
 }>();
 
 defineEmits<{
@@ -102,14 +141,14 @@ defineEmits<{
 
 // Expose methods to control modals
 const openModal = (modalName: keyof ModalState, personnel?: Personnel) => {
-    if (modalName === 'edit' && personnel) {
+    if ((modalName === 'edit' || modalName === 'view') && personnel) {
         selectedPersonnel.value = personnel;
     }
     modals[modalName] = true;
 };
 
 const closeModal = (modalName: keyof ModalState) => {
-    if (modalName === 'edit') {
+    if (modalName === 'edit' || modalName === 'view') {
         selectedPersonnel.value = null;
     }
     modals[modalName] = false;

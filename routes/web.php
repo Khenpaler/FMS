@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\PersonnelController;
+use App\Http\Controllers\UserProfileController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -15,10 +15,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // Personnel Management Routes
     Route::prefix('personnel-management')->name('personnel-management.')->group(function () {
-        // Personnel Routes
-        Route::resource('personnels', PersonnelController::class)->except(['create', 'edit']);
-        Route::put('personnels/{personnel}/restore', [PersonnelController::class, 'restore'])->name('personnels.restore');
-        Route::put('personnels/{personnel}/toggle-active', [PersonnelController::class, 'toggleActive'])->name('personnels.toggle-active');
+        Route::get('personnels', [UserProfileController::class, 'index'])->name('personnels.index');
+        Route::post('personnels', [UserProfileController::class, 'store'])->name('personnels.store');
+        Route::get('personnels/{user_profile}', [UserProfileController::class, 'show'])->name('personnels.show');
+        Route::put('personnels/{user_profile}', [UserProfileController::class, 'update'])->name('personnels.update');
+        Route::delete('personnels/{user_profile}', [UserProfileController::class, 'destroy'])->name('personnels.destroy');
 
         // Accounts Routes (placeholder)
         Route::get('accounts', function () {

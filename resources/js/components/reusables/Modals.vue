@@ -10,24 +10,26 @@
                 width || 'sm:max-w-lg'
             ]"
         >
-            <DialogHeader>
+            <DialogHeader v-if="showHeader">
                 <DialogTitle>{{ title }}</DialogTitle>
                 <DialogDescription v-if="description">{{ description }}</DialogDescription>
             </DialogHeader>
 
             <slot />
 
-            <DialogFooter>
-                <Button 
-                    type="button" 
-                    variant="outline" 
-                    @click="$emit('update:isOpen', false)"
-                >
-                    Cancel
-                </Button>
-                <Button type="submit" @click="$emit('save')">
-                    {{ saveText }}
-                </Button>
+            <DialogFooter v-if="showFooter">
+                <slot name="footer">
+                    <Button 
+                        type="button" 
+                        variant="outline" 
+                        @click="$emit('update:isOpen', false)"
+                    >
+                        Cancel
+                    </Button>
+                    <Button type="submit" @click="$emit('save')">
+                        {{ saveText }}
+                    </Button>
+                </slot>
             </DialogFooter>
         </DialogContent>
     </Dialog>
@@ -46,10 +48,12 @@ import {
 
 defineProps<{
     isOpen: boolean;
-    title: string;
+    title?: string;
     description?: string;
     saveText?: string;
     width?: string;
+    showHeader?: boolean;
+    showFooter?: boolean;
 }>();
 
 defineEmits<{

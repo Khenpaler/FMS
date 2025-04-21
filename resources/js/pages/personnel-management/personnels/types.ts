@@ -1,21 +1,27 @@
+export type Position = 'operation_manager' | 'dispatcher' | 'driver' | 'passenger_assistant_officer';
+export type Status = 'terminate' | 'on_duty' | 'off_duty';
+export type Sex = 'Male' | 'Female';
+
 export interface PersonnelFormData {
-    name: string;
-    type: PersonnelType;
-    birthday: string;
+    first_name: string;
+    last_name: string;
+    middle_initial?: string;
     license_number?: string;
     address: string;
-    phone_number: string;
-    contact_person: string;
-    is_active?: boolean;
-    [key: string]: string | boolean | number | null | undefined;
+    date_of_birth: string;
+    sex: Sex;
+    contact_number: string;
+    contact_person?: string;
+    contact_person_number?: string;
+    user_profile_image?: string;
+    position: Position;
+    date_hired: string;
+    status: Status;
+    [key: string]: string | undefined;
 }
 
-export type PersonnelType = 'drivers' | 'pao' | 'dispatchers';
-
 export interface Personnel extends PersonnelFormData {
-    id: number;
-    age: number;
+    user_profile_id: string;
     created_at: string;
     updated_at: string;
-    deleted_at: string | null;
 }

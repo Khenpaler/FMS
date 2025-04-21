@@ -4,7 +4,7 @@ import { useForm, router } from '@inertiajs/vue3';
 
 import { useToast } from 'vue-toastification';
 
-import type { PersonnelFormData, Personnel, PersonnelType } from './types';
+import type { PersonnelFormData, Personnel, Position } from './types';
 
 // Add interface for ModalsManager
 interface ModalsManager {
@@ -13,7 +13,7 @@ interface ModalsManager {
 }
 
 export function usePersonnelManagement(initialData: {
-    type: PersonnelType;
+    position: Position;
     search?: string;
     pagination: {
         current_page: number;
@@ -22,17 +22,23 @@ export function usePersonnelManagement(initialData: {
 }) {
     const toast = useToast();
     const form = useForm<PersonnelFormData>({
-        name: '',
-        type: initialData.type,
-        birthday: '',
+        first_name: '',
+        last_name: '',
+        middle_initial: '',
         license_number: '',
         address: '',
-        phone_number: '',
+        date_of_birth: '',
+        sex: 'Male',
+        contact_number: '',
         contact_person: '',
-        is_active: true,
+        contact_person_number: '',
+        user_profile_image: '',
+        position: initialData.position || 'driver',
+        date_hired: new Date().toISOString().split('T')[0],
+        status: 'on_duty'
     });
 
-    const type = ref(initialData.type);
+    const position = ref(initialData.position || 'driver');
     const search = ref(initialData.search || '');
     const currentPage = ref(initialData.pagination.current_page);
     const perPage = ref(initialData.pagination.per_page);
@@ -40,46 +46,68 @@ export function usePersonnelManagement(initialData: {
 
     // Create
     const handleCreateSubmit = (submittedForm: ReturnType<typeof useForm<PersonnelFormData>>) => {
-        // Ensure type is set correctly
-        const formData = {
-            ...submittedForm.data(),
-            type: type.value
-        };
+        const formData = new FormData();
+        const data = submittedForm.data();
+        
+        // Append all form fields except user_profile_image to FormData
+        Object.entries(data).forEach(([key, value]) => {
+            if (key !== 'user_profile_image' && value !== undefined && value !== null) {
+                formData.append(key, value.toString());
+            }
+        });
+
+        // Handle file upload
+        const fileInput = document.querySelector('#user_profile_image') as HTMLInputElement;
+        if (fileInput?.files?.length) {
+            formData.append('user_profile_image', fileInput.files[0]);
+        }
         
         router.post(route('personnel-management.personnels.store'), formData, {
+            forceFormData: true,
             onSuccess: () => {
                 toast.success('Personnel created successfully');
                 submittedForm.reset();
                 submittedForm.clearErrors();
                 modalsManager.value?.closeModal('create');
-                // Refresh the page to show new data
-                router.visit(route('personnel-management.personnels.index', { type: type.value }));
+                router.visit(route('personnel-management.personnels.index', { position: position.value }));
             },
             onError: (errors: Record<string, string>) => {
                 toast.error('Failed to create personnel');
                 console.error('Form errors:', errors);
-                // Pass errors back to the form
                 Object.keys(errors).forEach(key => {
                     submittedForm.setError(key, errors[key]);
                 });
             }
-        } as any);
+        });
     };
 
     // Update
     const handleUpdateSubmit = (id: number, submittedForm: ReturnType<typeof useForm<PersonnelFormData>>) => {
-        const formData = {
-            ...submittedForm.data(),
-            type: type.value
-        };
+        const formData = new FormData();
+        formData.append('_method', 'PUT');
+        const data = submittedForm.data();
+        
+        // Append all form fields except user_profile_image to FormData
+        Object.entries(data).forEach(([key, value]) => {
+            if (key !== 'user_profile_image' && value !== undefined && value !== null) {
+                formData.append(key, value.toString());
+            }
+        });
 
-        router.put(route('personnel-management.personnels.update', id), formData, {
+        // Handle file upload if there's a new image
+        const fileInput = document.querySelector('#user_profile_image') as HTMLInputElement;
+        if (fileInput?.files?.length) {
+            formData.append('user_profile_image', fileInput.files[0]);
+        }
+
+        router.post(route('personnel-management.personnels.update', id), formData, {
+            forceFormData: true,
             onSuccess: () => {
                 toast.success('Personnel updated successfully');
                 submittedForm.reset();
                 submittedForm.clearErrors();
                 modalsManager.value?.closeModal('edit');
-                router.visit(route('personnel-management.personnels.index', { type: type.value }));
+                router.visit(route('personnel-management.personnels.index', { position: position.value }));
             },
             onError: (errors: Record<string, string>) => {
                 toast.error('Failed to update personnel');
@@ -88,20 +116,22 @@ export function usePersonnelManagement(initialData: {
                     submittedForm.setError(key, errors[key]);
                 });
             }
-        } as any);
+        });
     };
 
     // Delete
     const handleDelete = (personnel: Personnel) => {
         if (confirm('Are you sure you want to delete this personnel?')) {
-            router.delete(route('personnel-management.personnels.destroy', personnel.id), {
+            router.delete(route('personnel-management.personnels.destroy', personnel.user_profile_id), {
                 onSuccess: () => {
                     toast.success('Personnel deleted successfully');
+                    // Refresh the page to show updated list
+                    router.visit(route('personnel-management.personnels.index', { position: position.value }));
                 },
                 onError: () => {
                     toast.error('Failed to delete personnel');
                 }
-            } as any);
+            });
         }
     };
 
@@ -134,8 +164,8 @@ export function usePersonnelManagement(initialData: {
     };
 
     // UI Controls
-    const handleTabChange = (value: PersonnelType) => {
-        type.value = value;
+    const handleTabChange = (value: Position) => {
+        position.value = value;
     };
 
     const handleAddNew = () => {
@@ -149,11 +179,11 @@ export function usePersonnelManagement(initialData: {
         console.log('View history');
     };
 
-    const handleFiltersChange = (newSearch: string, newType: PersonnelType, newPage: number, newPerPage: number) => {
+    const handleFiltersChange = (newSearch: string, newPosition: Position, newPage: number, newPerPage: number) => {
         router.get(
             route('personnel-management.personnels.index'),
             {
-                type: newType,
+                position: newPosition,
                 search: newSearch,
                 page: newPage,
                 per_page: newPerPage,
@@ -167,7 +197,7 @@ export function usePersonnelManagement(initialData: {
 
     return {
         form,
-        type,
+        position,
         search,
         currentPage,
         perPage,

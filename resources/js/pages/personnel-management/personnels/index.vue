@@ -4,18 +4,18 @@
     <AppLayout :breadcrumbs="breadcrumbs">
         <div class="container mx-auto px-4 py-6 space-y-6">
             <Tabs 
-                :model-value="type" 
+                :model-value="position" 
                 @update:model-value="handleTabChange"
                 @view-history="handleViewHistory"
             />
             
             <Table
-                :personnel="personnel"
                 v-model="search"
-                @edit="handleEdit"
+                :personnel="props.personnel"
+                @edit="(person) => modalsManagerRef?.openModal('edit', person)"
+                @view="(person) => modalsManagerRef?.openModal('view', person)"
                 @remove="handleDelete"
-                @view="handleView"
-                @add-new="handleAddNew"
+                @add-new="modalsManagerRef?.openModal('create')"
             />
 
             <TablePagination
@@ -25,9 +25,9 @@
                 :current-items="personnel.length"
             />
 
-            <ModalsManager 
-                ref="modalsManager" 
-                :type="type" 
+            <ModalsManager
+                ref="modalsManagerRef"
+                :position="position"
                 @submit="handleCreateSubmit"
                 @update="handleUpdateSubmit"
             />
@@ -48,20 +48,17 @@ import Tabs from './components/Tabs.vue';
 import ModalsManager from './components/modals/ModalsManager.vue';
 
 import type { BreadcrumbItem } from '@/types';
-import type { Personnel, PersonnelType } from './types';
+import type { Personnel, Position } from './types';
 
 import { usePersonnelManagement } from './usePersonnelManagement';
 
-// Add type for ModalsManager
-type ModalsManagerType = InstanceType<typeof ModalsManager>;
-
 interface Props {
     personnel: Personnel[];
-    type: PersonnelType;
+    position: Position;
     search?: string;
     filters: {
         search?: string;
-        type: PersonnelType;
+        position: Position;
         only_active: boolean;
     };
     pagination: {
@@ -86,7 +83,7 @@ const breadcrumbs: BreadcrumbItem[] = [
 ];
 
 const {
-    type,
+    position,
     search,
     currentPage,
     perPage,
@@ -101,7 +98,7 @@ const {
     handleCreateSubmit,
     handleUpdateSubmit,
 } = usePersonnelManagement({
-    type: props.type,
+    position: props.position,
     search: props.search,
     pagination: {
         current_page: props.pagination.current_page,
@@ -109,11 +106,13 @@ const {
     },
 });
 
+const modalsManagerRef = ref<{ openModal: (name: string, personnel?: Personnel) => void } | null>(null);
+
 // Watch for changes in filters and pagination
 watch(
-    [search, type, currentPage, perPage],
-    ([newSearch, newType, newPage, newPerPage]) => {
-        handleFiltersChange(newSearch, newType, newPage, newPerPage);
+    [search, position, currentPage, perPage],
+    ([newSearch, newPosition, newPage, newPerPage]) => {
+        handleFiltersChange(newSearch, newPosition, newPage, newPerPage);
     }
 );
 </script>
