@@ -6,7 +6,6 @@
             <Tabs 
                 :model-value="position" 
                 @update:model-value="handleTabChange"
-                @view-history="handleViewHistory"
             />
             
             <Table
@@ -56,7 +55,6 @@ const {
     modalsManagerRef,
     handleTabChange,
     handleDelete,
-    handleViewHistory,
     handleCreateSubmit,
     handleUpdateSubmit,
 } = usePersonnelManagement({

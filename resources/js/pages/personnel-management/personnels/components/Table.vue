@@ -1,7 +1,7 @@
 <template>
     <div class="w-full">
         <div class="flex items-center justify-between mb-4">
-            <div class="flex-1">
+            <div class="w-1/3">
                 <input
                     type="text"
                     placeholder="Find personnel..."

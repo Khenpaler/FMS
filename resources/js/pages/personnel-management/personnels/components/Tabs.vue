@@ -16,21 +16,11 @@
                     {{ tab.name }}
                 </button>
             </div>
-            <Button
-                variant="secondary"
-                class="flex items-center gap-2"
-                @click="$emit('view-history')"
-            >
-                <ClockIcon class="h-4 w-4" />
-                View History
-            </Button>
         </nav>
     </div>
 </template>
 
 <script setup lang="ts">
-import { ClockIcon } from 'lucide-vue-next';
-import { Button } from '@/components/ui/button';
 import type { Position } from '../types';
 import { watch } from 'vue';
 
@@ -51,7 +41,6 @@ const props = defineProps<{
 
 defineEmits<{
     (e: 'update:model-value', value: Position): void;
-    (e: 'view-history'): void;
 }>();
 
 // Watch for changes in the selected position

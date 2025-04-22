@@ -232,11 +232,6 @@ export function usePersonnelManagement(initialData: PersonnelManagementOptions) 
         modalsManager.value?.openModal('create');
     };
 
-    const handleViewHistory = () => {
-        // Implement view history functionality
-        console.log('View history');
-    };
-
     const handleFiltersChange = (newSearch: string, newPosition: Position, newPage: number, newPerPage: number) => {
         router.get(
             route('personnel-management.personnels.index'),
@@ -277,7 +272,6 @@ export function usePersonnelManagement(initialData: PersonnelManagementOptions) 
         // UI Controls
         handleTabChange,
         handleAddNew,
-        handleViewHistory,
         handleFiltersChange,
         breadcrumbs,
         modalsManagerRef,
