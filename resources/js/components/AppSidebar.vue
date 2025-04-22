@@ -68,7 +68,7 @@ const mainNavItems: NavItem[] = [
             <SidebarMenu>
                 <SidebarMenuItem>
                     <SidebarMenuButton size="lg" as-child>
-                        <Link :href="route('dashboard')">
+                        <Link :href="route('dashboard')" class="group-data-[collapsible=icon]:hidden">
                             <AppLogo />
                         </Link>
                     </SidebarMenuButton>

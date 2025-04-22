@@ -1,15 +1,17 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { ref, watch } from 'vue';
 import { Link, usePage } from '@inertiajs/vue3';
 import { SidebarMenu, SidebarMenuItem, SidebarMenuButton } from '@/components/ui/sidebar';
 import type { NavItem } from '@/types';
 import { ChevronDown } from 'lucide-vue-next';
+import { useSidebar } from '@/components/ui/sidebar/utils';
 
 defineProps<{
     items: NavItem[];
 }>();
 
 const page = usePage();
+const { isAnyDropdownOpen } = useSidebar();
 
 const isActive = (item: NavItem) => {
     if (item.href) {
@@ -29,6 +31,10 @@ const toggleCollapse = (itemTitle: string) => {
     } else {
         expandedItems.value.add(itemTitle);
     }
+    // Update the sidebar width state immediately
+    if (isAnyDropdownOpen) {
+        isAnyDropdownOpen.value = expandedItems.value.size > 0;
+    }
 };
 
 const isExpanded = (itemTitle: string) => {
@@ -42,9 +48,9 @@ const isExpanded = (itemTitle: string) => {
             <!-- Regular menu item -->
             <template v-if="!item.children">
                 <SidebarMenuButton :as-child="true" :is-active="isActive(item)">
-                    <Link v-if="item.href" :href="item.href" class="w-full">
+                    <Link v-if="item.href" :href="item.href" class="w-full flex items-center gap-2">
                         <component :is="item.icon" class="h-4 w-4" />
-                        {{ item.title }}
+                        <span class="group-data-[collapsible=icon]:hidden">{{ item.title }}</span>
                     </Link>
                 </SidebarMenuButton>
             </template>
@@ -59,7 +65,7 @@ const isExpanded = (itemTitle: string) => {
                     <div class="w-full flex items-center justify-between">
                         <div class="flex items-center gap-2">
                             <component :is="item.icon" class="h-4 w-4" />
-                            {{ item.title }}
+                            <span class="group-data-[collapsible=icon]:hidden">{{ item.title }}</span>
                         </div>
                         <ChevronDown 
                             class="h-4 w-4 transition-transform" 
@@ -76,9 +82,9 @@ const isExpanded = (itemTitle: string) => {
                         :as-child="true"
                         :is-active="isActive(child)"
                     >
-                        <Link v-if="child.href" :href="child.href" class="w-full">
+                        <Link v-if="child.href" :href="child.href" class="w-full flex items-center gap-2">
                             <component :is="child.icon" class="h-4 w-4" />
-                            {{ child.title }}
+                            <span class="group-data-[collapsible=icon]:hidden">{{ child.title }}</span>
                         </Link>
                     </SidebarMenuButton>
                 </div>

@@ -20,6 +20,7 @@ const emits = defineEmits<{
 
 const isMobile = useMediaQuery('(max-width: 768px)')
 const openMobile = ref(false)
+const isAnyDropdownOpen = ref(false)
 
 const open = useVModel(props, 'open', emits, {
   defaultValue: props.defaultOpen ?? false,
@@ -61,6 +62,7 @@ provideSidebarContext({
   openMobile,
   setOpenMobile,
   toggleSidebar,
+  isAnyDropdownOpen,
 })
 </script>
 
