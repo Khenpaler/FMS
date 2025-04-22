@@ -2,9 +2,12 @@
 
 namespace App\Services;
 
+use App\Models\User;
 use App\Models\UserProfile;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Carbon;
 
 class UserProfileService
 {
@@ -41,7 +44,40 @@ class UserProfileService
             $data['user_profile_image'] = $path;
         }
 
-        return UserProfile::create($data);
+        // Create the user profile
+        $userProfile = UserProfile::create($data);
+
+        // Generate username and password
+        $dateHired = Carbon::parse($data['date_hired']);
+        $username = strtolower($data['first_name'] . '.' . $data['last_name']);
+        $password = $dateHired->format('mdy') . '_' . strtoupper($data['last_name']);
+
+        // Create user account
+        $user = User::create([
+            'name' => $data['first_name'] . ' ' . $data['last_name'],
+            'email' => $username . '@fms.com',
+            'password' => Hash::make($password),
+            'role_id' => $this->getRoleIdByPosition($data['position']),
+            'user_profile_id' => $userProfile->user_profile_id
+        ]);
+
+        return $userProfile;
+    }
+
+    /**
+     * Get the appropriate role ID based on the position
+     */
+    private function getRoleIdByPosition(string $position): int
+    {
+        // Map positions to role IDs
+        $roleMap = [
+            'operation_manager' => 1,
+            'dispatcher' => 2,
+            'driver' => 3,
+            'passenger_assistant_officer' => 4
+        ];
+
+        return $roleMap[$position] ?? 3; // Default to driver role if position not found
     }
 
     public function update(UserProfile $profile, array $data): UserProfile
