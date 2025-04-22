@@ -56,6 +56,8 @@
                     title="Personnel Information"
                     description="Complete biodata of the personnel"
                     width="w-[95vw] sm:w-[95vw] lg:w-[1200px] xl:w-[1400px]"
+                    height="h-[90vh]"
+                    max-height="90vh"
                     :show-header="true"
                     :show-footer="true"
                 >
