@@ -61,7 +61,7 @@ import { Bus, Users, Wrench } from 'lucide-vue-next';
 
 import { Card, CardContent } from '@/components/ui/card';
 
-import GoogleMap from '@/components/reusables/GoogleMap.vue';
+import GoogleMap from '@/components/reusables/google-map.vue';
 import BusDetailsPanel from '@/components/pages/dashboard/BusDetailsPanel.vue';
 
 import { type BreadcrumbItem } from '@/types';

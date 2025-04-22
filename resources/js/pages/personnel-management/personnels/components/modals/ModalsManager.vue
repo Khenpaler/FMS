@@ -1,80 +1,81 @@
 <template>
-    <!-- Create Modal Suspense -->
-    <Suspense>
-        <template #default>
-            <Modals
-                v-model:is-open="modals.create"
-                title="Add New Personnel"
-                description="Fill in the details to add a new personnel."
-                @save="() => formRef?.submit()"
-                save-text="Save Personnel"
-                width="w-[95vw] sm:w-[500px] lg:w-[600px]"
-                :show-header="true"
-                :show-footer="true"
-            >
-                <PersonnelForm ref="formRef" :position="position" @submit="$emit('submit', $event)" />
-            </Modals>
-        </template>
-        <template #fallback>
-            <LoadingState />
-        </template>
-    </Suspense>
+    <Teleport to="body">
+        <!-- Create Modal Suspense -->
+        <Suspense>
+            <template #default>
+                <Modals
+                    v-model:is-open="modals.create"
+                    title="Add New Personnel"
+                    description="Fill in the details to add a new personnel."
+                    @save="() => formRef?.submit()"
+                    save-text="Save Personnel"
+                    width="w-[95vw] sm:w-[500px] lg:w-[600px]"
+                    :show-header="true"
+                    :show-footer="true"
+                >
+                    <PersonnelForm ref="formRef" :position="position" @submit="$emit('submit', $event)" />
+                </Modals>
+            </template>
+            <template #fallback>
+                <LoadingState />
+            </template>
+        </Suspense>
 
-    <!-- Edit Modal Suspense -->
-    <Suspense>
-        <template #default>
-            <Modals
-                v-model:is-open="modals.edit"
-                title="Edit Personnel"
-                description="Update the personnel details."
-                @save="() => editFormRef?.submit()"
-                save-text="Update Personnel"
-                width="w-[95vw] sm:w-[500px] lg:w-[600px]"
-                :show-header="true"
-                :show-footer="true"
-            >
-            
-                <PersonnelForm 
-                    v-if="selectedPersonnel"
-                    ref="editFormRef" 
-                    :position="selectedPersonnel.position"
-                    :initial-data="selectedPersonnel"
-                    @submit="$emit('update', Number(selectedPersonnel.user_profile_id), $event)" 
-                />
-            </Modals>
-        </template>
-        <template #fallback>
-            <LoadingState />
-        </template>
-    </Suspense>
+        <!-- Edit Modal Suspense -->
+        <Suspense>
+            <template #default>
+                <Modals
+                    v-model:is-open="modals.edit"
+                    title="Edit Personnel"
+                    description="Update the personnel details."
+                    @save="() => editFormRef?.submit()"
+                    save-text="Update Personnel"
+                    width="w-[95vw] sm:w-[500px] lg:w-[600px]"
+                    :show-header="true"
+                    :show-footer="true"
+                >
+                    <PersonnelForm 
+                        v-if="selectedPersonnel"
+                        ref="editFormRef" 
+                        :position="selectedPersonnel.position"
+                        :initial-data="selectedPersonnel"
+                        @submit="$emit('update', Number(selectedPersonnel.user_profile_id), $event)" 
+                    />
+                </Modals>
+            </template>
+            <template #fallback>
+                <LoadingState />
+            </template>
+        </Suspense>
 
-    <!-- View Modal Suspense -->
-    <Suspense>
-        <template #default>
-            <Modals
-                v-model:is-open="modals.view"
-                title="Personnel Information"
-                description="Complete biodata of the personnel"
-                width="w-[95vw] sm:w-[1200px] lg:w-[1400px]"
-                :show-header="true"
-                :show-footer="true"
-            >
-                <ViewModal 
-                    v-if="selectedPersonnel"
-                    :person="selectedPersonnel"
-                />
-                
-                <template #footer>
-                    <Button variant="default" @click="closeModal('view')">Close</Button>
-                </template>
-            </Modals>
-        </template>
-        <template #fallback>
-            <LoadingState />
-        </template>
-    </Suspense>
+        <!-- View Modal Suspense -->
+        <Suspense>
+            <template #default>
+                <Modals
+                    v-model:is-open="modals.view"
+                    title="Personnel Information"
+                    description="Complete biodata of the personnel"
+                    width="w-[95vw] sm:w-[95vw] lg:w-[1200px] xl:w-[1400px]"
+                    :show-header="true"
+                    :show-footer="true"
+                >
+                    <ViewModal 
+                        v-if="selectedPersonnel"
+                        :person="selectedPersonnel"
+                    />
+                    
+                    <template #footer>
+                        <Button variant="default" @click="closeModal('view')">Close</Button>
+                    </template>
+                </Modals>
+            </template>
+            <template #fallback>
+                <LoadingState />
+            </template>
+        </Suspense>
 
-    <!-- Add more modals here as needed -->
+        <!-- Add more modals here as needed -->
+    </Teleport>
 </template>
 
 <script setup lang="ts">
@@ -82,7 +83,7 @@ import { reactive, defineAsyncComponent, defineComponent, ref } from 'vue';
 
 import type { InertiaForm } from '@inertiajs/vue3';
 
-import Modals from '@/components/reusables/Modals.vue';
+import Modals from '@/components/reusables/modals.vue';
 import { Button } from '@/components/ui/button';
 
 import type { PersonnelFormData, Position, Personnel } from '../../types';

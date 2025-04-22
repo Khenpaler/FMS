@@ -1,10 +1,29 @@
-import { ref } from 'vue';
+import { ref, watch, onMounted } from 'vue';
 
 import { useForm, router } from '@inertiajs/vue3';
 
 import { useToast } from 'vue-toastification';
 
+import type { BreadcrumbItem } from '@/types';
 import type { PersonnelFormData, Personnel, Position } from './types';
+
+// Props interface moved from index.vue
+export interface Props {
+    personnel: Personnel[];
+    position: Position;
+    search?: string;
+    filters: {
+        search?: string;
+        position: Position;
+        only_active: boolean;
+    };
+    pagination: {
+        current_page: number;
+        last_page: number;
+        per_page: number;
+        total: number;
+    };
+}
 
 // Add interface for ModalsManager
 interface ModalsManager {
@@ -12,14 +31,16 @@ interface ModalsManager {
     closeModal: (modalName: 'create' | 'edit') => void;
 }
 
-export function usePersonnelManagement(initialData: {
+interface PersonnelManagementOptions {
     position: Position;
     search?: string;
     pagination: {
         current_page: number;
         per_page: number;
     };
-}) {
+}
+
+export function usePersonnelManagement(initialData: PersonnelManagementOptions) {
     const toast = useToast();
     const form = useForm<PersonnelFormData>({
         first_name: '',
@@ -43,6 +64,43 @@ export function usePersonnelManagement(initialData: {
     const currentPage = ref(initialData.pagination.current_page);
     const perPage = ref(initialData.pagination.per_page);
     const modalsManager = ref<ModalsManager | null>(null);
+
+    // Add the breadcrumbs
+    const breadcrumbs: BreadcrumbItem[] = [
+        {
+            title: 'Personnel Management',
+            href: '/personnel-management',
+        },
+        {
+            title: 'Personnel',
+            href: '/personnel-management/personnels',
+        },
+    ];
+
+    // Add modalsManagerRef
+    const modalsManagerRef = ref<{ openModal: (name: string, personnel?: Personnel) => void } | null>(null);
+
+    // Setup function (replaces onMounted logic)
+    const setup = () => {
+        const initialPosition = initialData.position || 'driver';
+        handleFiltersChange(
+            initialData.search || '', 
+            initialPosition, 
+            initialData.pagination.current_page, 
+            initialData.pagination.per_page
+        );
+    };
+
+    // Watch setup (moved from component)
+    watch(
+        [search, position, currentPage, perPage],
+        ([newSearch, newPosition, newPage, newPerPage]) => {
+            handleFiltersChange(newSearch, newPosition, newPage, newPerPage);
+        }
+    );
+
+    // Call setup on mount
+    onMounted(setup);
 
     // Create
     const handleCreateSubmit = (submittedForm: ReturnType<typeof useForm<PersonnelFormData>>) => {
@@ -221,5 +279,8 @@ export function usePersonnelManagement(initialData: {
         handleAddNew,
         handleViewHistory,
         handleFiltersChange,
+        breadcrumbs,
+        modalsManagerRef,
+        setup,
     };
 }

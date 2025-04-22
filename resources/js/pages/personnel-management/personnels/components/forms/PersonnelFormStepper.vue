@@ -1,10 +1,10 @@
 <template>
     <div class="space-y-6">
         <!-- Steps indicator -->
-        <div class="flex justify-between items-center mb-8">
-            <div v-for="(step, index) in steps" :key="index" class="flex items-center">
+        <div class="flex justify-between items-center mb-8 overflow-x-auto sm:overflow-visible px-2 sm:px-0">
+            <div v-for="(step, index) in steps" :key="index" class="flex items-center flex-shrink-0">
                 <div :class="[
-                    'w-8 h-8 rounded-full flex items-center justify-center font-medium',
+                    'w-6 h-6 sm:w-8 sm:h-8 rounded-full flex items-center justify-center font-medium text-sm sm:text-base',
                     currentStep > index 
                         ? 'bg-primary text-primary-foreground' 
                         : currentStep === index 
@@ -13,19 +13,19 @@
                 ]">
                     {{ index + 1 }}
                 </div>
-                <div v-if="index < steps.length - 1" class="w-20 h-1 mx-2" :class="[
+                <div v-if="index < steps.length - 1" class="w-12 sm:w-20 h-1 mx-1 sm:mx-2" :class="[
                     currentStep > index ? 'bg-primary' : 'bg-muted'
                 ]"></div>
             </div>
         </div>
 
         <!-- Step title -->
-        <div class="text-lg font-medium mb-4">
+        <div class="text-base sm:text-lg font-medium mb-4 px-2 sm:px-0">
             {{ steps[currentStep].title }}
         </div>
 
         <!-- Step content -->
-        <div class="mb-6">
+        <div class="mb-6 px-2 sm:px-0">
             <component 
                 :is="steps[currentStep].component" 
                 v-model="formData"
@@ -35,17 +35,19 @@
         </div>
 
         <!-- Navigation buttons -->
-        <div class="flex justify-between">
+        <div class="flex justify-between px-2 sm:px-0">
             <Button 
                 variant="outline" 
                 @click="prevStep" 
                 :disabled="currentStep === 0"
+                class="text-sm sm:text-base"
             >
                 Previous
             </Button>
             <Button 
                 @click="nextStep"
                 :disabled="currentStep === steps.length - 1"
+                class="text-sm sm:text-base"
             >
                 Next
             </Button>

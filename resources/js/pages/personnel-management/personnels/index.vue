@@ -36,61 +36,27 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, onMounted } from 'vue';
 import { Head } from '@inertiajs/vue3';
-
 import AppLayout from '@/layouts/AppLayout.vue';
-
 import { TablePagination } from '@/components/ui/data-table';
-
 import Table from './components/Table.vue';
 import Tabs from './components/Tabs.vue';
 import ModalsManager from './components/modals/ModalsManager.vue';
-
-import type { BreadcrumbItem } from '@/types';
-import type { Personnel, Position } from './types';
-
-import { usePersonnelManagement } from './usePersonnelManagement';
-
-interface Props {
-    personnel: Personnel[];
-    position: Position;
-    search?: string;
-    filters: {
-        search?: string;
-        position: Position;
-        only_active: boolean;
-    };
-    pagination: {
-        current_page: number;
-        last_page: number;
-        per_page: number;
-        total: number;
-    };
-}
+import type { Personnel } from './types';
+import { usePersonnelManagement, type Props } from './usePersonnelManagement';
 
 const props = defineProps<Props>();
-
-const breadcrumbs: BreadcrumbItem[] = [
-    {
-        title: 'Personnel Management',
-        href: '/personnel-management',
-    },
-    {
-        title: 'Personnel',
-        href: '/personnel-management/personnels',
-    },
-];
 
 const {
     position,
     search,
     currentPage,
     perPage,
+    breadcrumbs,
+    modalsManagerRef,
     handleTabChange,
     handleDelete,
     handleViewHistory,
-    handleFiltersChange,
     handleCreateSubmit,
     handleUpdateSubmit,
 } = usePersonnelManagement({
@@ -101,21 +67,4 @@ const {
         per_page: props.pagination.per_page,
     },
 });
-
-const modalsManagerRef = ref<{ openModal: (name: string, personnel?: Personnel) => void } | null>(null);
-
-// Apply initial filter when component mounts
-onMounted(() => {
-    // Set default position to 'driver' if none provided
-    const initialPosition = props.position || 'driver';
-    handleFiltersChange(props.search || '', initialPosition, props.pagination.current_page, props.pagination.per_page);
-});
-
-// Watch for changes in filters and pagination
-watch(
-    [search, position, currentPage, perPage],
-    ([newSearch, newPosition, newPage, newPerPage]) => {
-        handleFiltersChange(newSearch, newPosition, newPage, newPerPage);
-    }
-);
 </script>
